@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>K S Lo English: AI Resource Showcase</title>
+    <script>
+      (function () {
+        var base = "/ai-showcase";
+        var path = window.location.pathname.indexOf(base) === 0
+          ? window.location.pathname.slice(base.length)
+          : window.location.pathname;
+        var requestedPath = path + window.location.search + window.location.hash;
+        window.location.replace(base + "/?p=" + encodeURIComponent(requestedPath));
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
