@@ -4,3 +4,4 @@ dist/
 *.log
 review-*.png
 route-diagnostic.png
+scripts/diagnose-*.mjs

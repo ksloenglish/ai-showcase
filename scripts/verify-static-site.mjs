@@ -57,7 +57,9 @@ try {
   await desktop.close();
 
   const fallback = await readFile("dist/404.html", "utf8");
+  const index = await readFile("dist/index.html", "utf8");
   check(fallback.includes('var base = "/ai-showcase"'), "GitHub Pages route fallback does not target the ai-showcase project path.");
+  check(index.includes('replace(/\\/$/, "") + requestedPath'), "GitHub Pages fallback does not normalise the project base path.");
 } finally {
   await browser.close();
 }
