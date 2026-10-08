@@ -1,20 +1,15 @@
 {
-  "source": "Manus managed storage export",
+  "source": "Manus managed storage export and reviewed public resource assets",
   "assets": [
-    {
-      "filename": "ai-short-film-production-preview_2118c83e.jpg",
-      "bytes": 77491,
-      "contentType": "image/jpeg"
-    },
     {
       "filename": "ai-short-film-production_b3b3064c.md",
       "bytes": 8796,
       "contentType": "text/markdown; charset=utf-8"
     },
     {
-      "filename": "dse-english-vocabulary-glossary-from-a-reading-passage-preview_80d001f0.webp",
-      "bytes": 63800,
-      "contentType": "image/webp"
+      "filename": "ai-short-film-production-preview_2118c83e.jpg",
+      "bytes": 77491,
+      "contentType": "image/jpeg"
     },
     {
       "filename": "dse-english-vocabulary-glossary-from-a-reading-passage_7330747c.pdf",
@@ -27,8 +22,8 @@
       "contentType": "text/markdown; charset=utf-8"
     },
     {
-      "filename": "dse-news-article-cloze-exercise-preview_47446c60.webp",
-      "bytes": 61008,
+      "filename": "dse-english-vocabulary-glossary-from-a-reading-passage-preview_80d001f0.webp",
+      "bytes": 63800,
       "contentType": "image/webp"
     },
     {
@@ -42,8 +37,8 @@
       "contentType": "text/markdown; charset=utf-8"
     },
     {
-      "filename": "dse-news-article-proofreading-exercise-preview_4bdf4e8b.webp",
-      "bytes": 73022,
+      "filename": "dse-news-article-cloze-exercise-preview_47446c60.webp",
+      "bytes": 61008,
       "contentType": "image/webp"
     },
     {
@@ -57,8 +52,8 @@
       "contentType": "text/markdown; charset=utf-8"
     },
     {
-      "filename": "dse-news-fact-sheet-cloze-exercise-preview_7ef5bd54.webp",
-      "bytes": 61158,
+      "filename": "dse-news-article-proofreading-exercise-preview_4bdf4e8b.webp",
+      "bytes": 73022,
       "contentType": "image/webp"
     },
     {
@@ -72,8 +67,8 @@
       "contentType": "application/pdf"
     },
     {
-      "filename": "dse-paper-4-group-interaction-speaking-ideas-handout-preview_37c8bfd9.webp",
-      "bytes": 57020,
+      "filename": "dse-news-fact-sheet-cloze-exercise-preview_7ef5bd54.webp",
+      "bytes": 61158,
       "contentType": "image/webp"
     },
     {
@@ -87,8 +82,8 @@
       "contentType": "text/markdown; charset=utf-8"
     },
     {
-      "filename": "four-option-vocabulary-practice-website-preview_3ba40f77.webp",
-      "bytes": 179904,
+      "filename": "dse-paper-4-group-interaction-speaking-ideas-handout-preview_37c8bfd9.webp",
+      "bytes": 57020,
       "contentType": "image/webp"
     },
     {
@@ -97,8 +92,8 @@
       "contentType": "text/markdown; charset=utf-8"
     },
     {
-      "filename": "grammar-answer-judge-report-preview_97e156ef.webp",
-      "bytes": 53442,
+      "filename": "four-option-vocabulary-practice-website-preview_3ba40f77.webp",
+      "bytes": 179904,
       "contentType": "image/webp"
     },
     {
@@ -112,14 +107,19 @@
       "contentType": "text/markdown; charset=utf-8"
     },
     {
-      "filename": "grammar-challenge-website-preview_2fb462cb.webp",
-      "bytes": 88386,
+      "filename": "grammar-answer-judge-report-preview_97e156ef.webp",
+      "bytes": 53442,
       "contentType": "image/webp"
     },
     {
       "filename": "grammar-challenge-website_a5eda917.md",
       "bytes": 15450,
       "contentType": "text/markdown; charset=utf-8"
+    },
+    {
+      "filename": "grammar-challenge-website-preview_2fb462cb.webp",
+      "bytes": 88386,
+      "contentType": "image/webp"
     },
     {
       "filename": "historical-interview-character-for-students_54cba2d7.md",
@@ -147,11 +147,6 @@
       "contentType": "image/webp"
     },
     {
-      "filename": "labelled-vocabulary-image-for-powerpoint-preview_b057646b.webp",
-      "bytes": 134646,
-      "contentType": "image/webp"
-    },
-    {
       "filename": "labelled-vocabulary-image-for-powerpoint_3f244484.md",
       "bytes": 6368,
       "contentType": "text/markdown; charset=utf-8"
@@ -162,8 +157,8 @@
       "contentType": "application/pdf"
     },
     {
-      "filename": "oxford-vocabulary-multiple-choice-cloze-exercise-preview_755b0843.webp",
-      "bytes": 72566,
+      "filename": "labelled-vocabulary-image-for-powerpoint-preview_b057646b.webp",
+      "bytes": 134646,
       "contentType": "image/webp"
     },
     {
@@ -177,9 +172,29 @@
       "contentType": "application/pdf"
     },
     {
-      "filename": "pokemon-style-vocabulary-cards-preview_b8b1c91e.webp",
-      "bytes": 102258,
+      "filename": "oxford-vocabulary-multiple-choice-cloze-exercise-preview_755b0843.webp",
+      "bytes": 72566,
       "contentType": "image/webp"
+    },
+    {
+      "filename": "picture-writing-task-video-bring-the-pictures-to-life-preview.jpg",
+      "bytes": 56547,
+      "contentType": "image/jpeg"
+    },
+    {
+      "filename": "picture-writing-task-video-bring-the-pictures-to-life.md",
+      "bytes": 10221,
+      "contentType": "text/markdown; charset=utf-8"
+    },
+    {
+      "filename": "plot-mountain-explainer-video-preview.jpg",
+      "bytes": 99174,
+      "contentType": "image/jpeg"
+    },
+    {
+      "filename": "plot-mountain-explainer-video.md",
+      "bytes": 7889,
+      "contentType": "text/markdown; charset=utf-8"
     },
     {
       "filename": "pokemon-style-vocabulary-cards_40a0d18c.pdf",
@@ -192,8 +207,8 @@
       "contentType": "text/markdown; charset=utf-8"
     },
     {
-      "filename": "print-friendly-educational-infographic-preview_28ead5fd.webp",
-      "bytes": 116606,
+      "filename": "pokemon-style-vocabulary-cards-preview_b8b1c91e.webp",
+      "bytes": 102258,
       "contentType": "image/webp"
     },
     {
@@ -205,6 +220,11 @@
       "filename": "print-friendly-educational-infographic_9fc13317.md",
       "bytes": 6805,
       "contentType": "text/markdown; charset=utf-8"
+    },
+    {
+      "filename": "print-friendly-educational-infographic-preview_28ead5fd.webp",
+      "bytes": 116606,
+      "contentType": "image/webp"
     },
     {
       "filename": "r15-solidmemory-leaderboards-preview_84903cd9.webp",

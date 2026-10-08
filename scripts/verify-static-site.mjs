@@ -42,6 +42,27 @@ try {
   check((await page.locator("main").getByText(/resources shown/).first().textContent())?.trim() === "3 resources shown", "Return to archive did not restore the Visual filter.");
   await audit(page);
 
+  await page.goto(`${baseUrl}/resources?category=video`, { waitUntil: "networkidle" });
+  check((await page.locator("main").getByText(/resources shown/).first().textContent())?.trim() === "3 resources shown", "Video filter did not show three resources.");
+  check((await page.getByRole("button", { name: "Video", exact: true }).getAttribute("class"))?.includes("filter-chip-active"), "Video filter is not active.");
+  const pictureWritingCard = page.locator('a[href*="picture-writing-task-video-bring-the-pictures-to-life"]').first();
+  check((await pictureWritingCard.getAttribute("href"))?.endsWith("?category=video"), "Picture-writing video link does not retain the Video filter.");
+  await pictureWritingCard.click();
+  await page.waitForLoadState("networkidle");
+  check((await page.locator("h1").textContent())?.includes("Picture Writing-Task Video"), "Picture-writing video detail page did not load.");
+  check(await page.locator(".prompt-code pre").textContent().then(text => text?.includes("STAGE 1 – PLAN FIRST") ?? false), "Picture-writing video guide prompt did not load.");
+  const pictureWritingVideoUrl = await page.getByRole("link", { name: "Watch video", exact: true }).getAttribute("href");
+  check(pictureWritingVideoUrl === "https://www.youtube.com/watch?v=extBbAIXkZ4", "Picture-writing video action does not open the supplied YouTube video.");
+  check(await page.getByRole("link", { name: "Watch video", exact: true }).getAttribute("target").then(value => value === "_blank"), "Picture-writing video action does not open in a new tab.");
+  await audit(page);
+
+  await page.goto(`${baseUrl}/resources/plot-mountain-explainer-video?category=video`, { waitUntil: "networkidle" });
+  check((await page.locator("h1").textContent())?.includes("Plot Mountain Explainer Video"), "Plot mountain video detail page did not load.");
+  check(await page.locator(".prompt-code pre").textContent().then(text => text?.includes("exposition, rising action, climax, resolution") ?? false), "Plot mountain video guide prompt did not load.");
+  const plotMountainVideoUrl = await page.getByRole("link", { name: "Watch video", exact: true }).getAttribute("href");
+  check(plotMountainVideoUrl === "https://www.youtube.com/watch?v=j8PG6B4tPuQ", "Plot mountain video action does not open the supplied YouTube video.");
+  await audit(page);
+
   await page.goto(`${baseUrl}/resources/dse-english-vocabulary-glossary-from-a-reading-passage`, { waitUntil: "networkidle" });
   const downloadUrl = await page.getByRole("link", { name: "PDF sample", exact: true }).getAttribute("href");
   check(downloadUrl?.includes("/ai-showcase/assets/") && downloadUrl.endsWith(".pdf"), "Download action does not use the local static asset.");
@@ -50,8 +71,8 @@ try {
 
   const mobile = await browser.newContext({ viewport: { width: 375, height: 812 } });
   const mobilePage = await mobile.newPage();
-  await mobilePage.goto(`${baseUrl}/resources?category=interactive`, { waitUntil: "networkidle" });
-  check((await mobilePage.locator("main").getByText(/resources shown/).first().textContent())?.trim() === "5 resources shown", "Mobile Interactive filter did not show five resources.");
+  await mobilePage.goto(`${baseUrl}/resources/picture-writing-task-video-bring-the-pictures-to-life?category=video`, { waitUntil: "networkidle" });
+  check((await mobilePage.locator("h1").textContent())?.includes("Picture Writing-Task Video"), "Mobile picture-writing video detail page did not load.");
   await audit(mobilePage);
   await mobile.close();
   await desktop.close();
@@ -73,4 +94,5 @@ console.log("Static route fallback: PASS");
 console.log("No administration workflow links: PASS");
 console.log("Static local assets: PASS");
 console.log("Archive filter persistence: PASS");
+console.log("Two new Video resources and YouTube actions: PASS");
 console.log("Desktop and mobile WCAG audit: PASS");
