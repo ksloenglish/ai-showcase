@@ -6,6 +6,14 @@ This repository contains the **public static website** for the K S Lo English AI
 
 Every push to `main` runs the GitHub Pages deployment workflow. The repository uses only static HTML, CSS, JavaScript and versioned local assets; it has no database, login, server-side importer or `/admin` route.
 
+For showcase changes made through Manus, use the paired release command after the content and UI work is ready. It runs the required local checks, commits and pushes `main`, waits for the GitHub Pages workflow, then runs the browser regression suite against the live site:
+
+```bash
+GITHUB_RELEASE_MESSAGE="feat: describe the public update" pnpm release:github
+```
+
+Do not report a Manus update complete until this command has succeeded and the corresponding Manus source checkpoint has been saved.
+
 ## Future update workflow
 
 The editorial workflow is intentionally simple. When a resource is ready, upload the following materials in a Manus chat and say whether the item is new or an update:
@@ -17,7 +25,7 @@ The editorial workflow is intentionally simple. When a resource is ready, upload
 | Preview image | Required for a new live site, video or AI tool; preferred for every resource |
 | Brief note | Give the title, category and any replacement instructions |
 
-The site is then updated, checked for structure, links, responsive behaviour and accessibility, and prepared for a new GitHub Pages release. No Google Drive scan, Manus sign-in or in-site management task is required.
+The site is then updated, checked for structure, links, responsive behaviour and accessibility, and released to GitHub Pages as part of the same Manus task. No Google Drive scan, Manus sign-in or in-site management task is required.
 
 ## Local checks
 
