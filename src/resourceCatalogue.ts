@@ -1,5 +1,7 @@
 export const staticAsset = (filename: string) => `${import.meta.env.BASE_URL}assets/${filename}`;
 
+export const formatResourceCode = (order: number) => `S${String(order).padStart(2, "0")}`;
+
 export const categoryDefinitions = [
   {
     id: "text-based",

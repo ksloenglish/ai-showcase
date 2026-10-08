@@ -47,6 +47,8 @@ try {
   check((await page.getByRole("button", { name: "Video", exact: true }).getAttribute("class"))?.includes("filter-chip-active"), "Video filter is not active.");
   const pictureWritingCard = page.locator('a[href*="picture-writing-task-video-bring-the-pictures-to-life"]').first();
   check((await pictureWritingCard.getAttribute("href"))?.endsWith("?category=video"), "Picture-writing video link does not retain the Video filter.");
+  const plotMountainCard = page.locator('a[href*="plot-mountain-explainer-video"]').first();
+  check((await plotMountainCard.locator(".resource-code").textContent())?.trim() === "S18", "Plot mountain video card does not show label S18.");
   await pictureWritingCard.click();
   await page.waitForLoadState("networkidle");
   check((await page.locator("h1").textContent())?.includes("Picture Writing-Task Video"), "Picture-writing video detail page did not load.");
@@ -71,8 +73,9 @@ try {
 
   const mobile = await browser.newContext({ viewport: { width: 375, height: 812 } });
   const mobilePage = await mobile.newPage();
-  await mobilePage.goto(`${baseUrl}/resources/picture-writing-task-video-bring-the-pictures-to-life?category=video`, { waitUntil: "networkidle" });
-  check((await mobilePage.locator("h1").textContent())?.includes("Picture Writing-Task Video"), "Mobile picture-writing video detail page did not load.");
+  await mobilePage.goto(`${baseUrl}/resources/plot-mountain-explainer-video?category=video`, { waitUntil: "networkidle" });
+  check((await mobilePage.locator("h1").textContent())?.includes("Plot Mountain Explainer Video"), "Mobile plot mountain video detail page did not load.");
+  check((await mobilePage.locator(".resource-detail-code").textContent())?.trim() === "S18", "Mobile plot mountain video does not show label S18.");
   await audit(mobilePage);
   await mobile.close();
   await desktop.close();

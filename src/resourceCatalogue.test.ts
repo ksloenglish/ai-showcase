@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { categoryDefinitions, resourceCatalogue } from "./resourceCatalogue";
+import { categoryDefinitions, formatResourceCode, resourceCatalogue } from "./resourceCatalogue";
 
 describe("static resource catalogue", () => {
   it("contains the complete eighteen-resource archive with unique slugs", () => {
@@ -20,6 +20,9 @@ describe("static resource catalogue", () => {
       "https://www.youtube.com/watch?v=extBbAIXkZ4",
       "https://www.youtube.com/watch?v=j8PG6B4tPuQ",
     ]);
+    expect(videos.slice(1).map(resource => resource.order)).toEqual([17, 18]);
+    expect([...resourceCatalogue.map(resource => resource.order)].sort((left, right) => left - right)).toEqual(Array.from({ length: 18 }, (_, index) => index + 1));
+    expect(formatResourceCode(18)).toBe("S18");
   });
 
   it("uses local static assets for every guide, preview and downloadable sample", () => {

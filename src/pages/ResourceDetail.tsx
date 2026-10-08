@@ -3,7 +3,7 @@ import { PromptPanel } from "@/components/PromptPanel";
 import { ResourceCard } from "@/components/ResourceCard";
 import { SiteLayout } from "@/components/SiteLayout";
 import { parseResourceMarkdown, type ParsedGuide } from "@/lib/resourceMarkdown";
-import { resourceBySlug, resourceCatalogue } from "@/resourceCatalogue";
+import { formatResourceCode, resourceBySlug, resourceCatalogue } from "@/resourceCatalogue";
 import { ArrowLeft, ArrowUpRight, CheckCircle2, Download, ExternalLink, LoaderCircle, Play, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Streamdown } from "streamdown";
@@ -84,7 +84,7 @@ export default function ResourceDetail() {
             <div className="mt-9 grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
               <div className="resource-preview-stage">
                 <img src={resource.previewUrl} alt={resource.previewAlt} />
-                <span className="resource-detail-code">R{String(resource.order).padStart(2, "0")}</span>
+                <span className="resource-detail-code">{formatResourceCode(resource.order)}</span>
               </div>
               <div>
                 <p className="section-kicker text-cyan">{resource.category.replace("-", " ")} · {resource.outputLabel}</p>

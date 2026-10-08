@@ -1,4 +1,4 @@
-import type { CatalogueResource } from "@/resourceCatalogue";
+import { formatResourceCode, type CatalogueResource } from "@/resourceCatalogue";
 import { ArrowUpRight, Download, ExternalLink, Play } from "lucide-react";
 import { Link } from "wouter";
 
@@ -28,7 +28,7 @@ export function ResourceCard({
       <Link href={`/resources/${resource.slug}${archiveSearch}`} className="block">
         <div className="resource-card-media">
           <img src={resource.previewUrl} alt={resource.previewAlt} loading="lazy" />
-          <span className="resource-code">R{String(resource.order).padStart(2, "0")}</span>
+          <span className="resource-code">{formatResourceCode(resource.order)}</span>
           <span className="resource-output"><Icon size={13} /> {resource.outputLabel}</span>
         </div>
         <div className="p-5 sm:p-6">
