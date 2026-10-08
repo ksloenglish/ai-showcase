@@ -18,7 +18,7 @@ function run(command, args, options = {}) {
     cwd: process.cwd(),
     encoding: "utf8",
     stdio: options.capture ? ["ignore", "pipe", "pipe"] : "inherit",
-    env: { ...process.env, ...options.env },
+    env: { ...process.env, NO_COLOR: "1", GH_PAGER: "cat", GH_FORCE_TTY: "0", ...options.env },
   });
   if (result.error) throw result.error;
   if (result.status !== 0) {
@@ -32,13 +32,17 @@ function gitOutput(...args) {
   return run("git", args, { capture: true });
 }
 
+function stripAnsi(value) {
+  return value.replace(/\u001B\[[0-?]*[ -/]*[@-~]/g, "");
+}
+
 async function findCurrentRun(headSha) {
   for (let attempt = 0; attempt < 12; attempt += 1) {
     const output = run("gh", [
       "run", "list", "--repo", repository, "--workflow", "deploy-pages.yml", "--branch", branch,
       "--event", "push", "--limit", "10", "--json", "databaseId,headSha",
     ], { capture: true });
-    const workflowRun = JSON.parse(output).find(candidate => candidate.headSha === headSha);
+    const workflowRun = JSON.parse(stripAnsi(output)).find(candidate => candidate.headSha === headSha);
     if (workflowRun) return String(workflowRun.databaseId);
     await delay(3_000);
   }
