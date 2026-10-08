@@ -38,8 +38,8 @@ async function findCurrentRun(headSha) {
       "run", "list", "--repo", repository, "--workflow", "deploy-pages.yml", "--branch", branch,
       "--event", "push", "--limit", "10", "--json", "databaseId,headSha",
     ], { capture: true });
-    const run = JSON.parse(output).find(candidate => candidate.headSha === headSha);
-    if (run) return String(run.databaseId);
+    const workflowRun = JSON.parse(output).find(candidate => candidate.headSha === headSha);
+    if (workflowRun) return String(workflowRun.databaseId);
     await delay(3_000);
   }
   throw new Error(`No GitHub Pages workflow run was found for ${headSha}.`);
