@@ -81,9 +81,9 @@ export default function ResourceDetail() {
             <Link href={`/resources${archiveSearch}`} className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.13em] text-white/58 hover:text-cyan">
               <ArrowLeft size={15} /> Back to the archive
             </Link>
-            <div className="mt-9 grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+            <div className={`mt-9 grid gap-10 lg:grid-cols-[1.1fr_0.9fr] ${resource.previewAspectRatio ? "lg:items-start" : "lg:items-center"}`}>
               <div className="resource-preview-stage">
-                <img src={resource.previewUrl} alt={resource.previewAlt} />
+                <img src={resource.previewUrl} alt={resource.previewAlt} style={{ aspectRatio: resource.previewAspectRatio }} />
                 <span className="resource-detail-code">{formatResourceCode(resource.order)}</span>
               </div>
               <div>

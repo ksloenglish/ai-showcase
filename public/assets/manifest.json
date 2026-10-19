@@ -250,6 +250,26 @@
       "filename": "vocabulary-revision-website-preview_a94e7859.webp",
       "bytes": 248090,
       "contentType": "image/webp"
+    },
+    {
+      "filename": "illustrated-vocabulary-revision-video.md",
+      "bytes": 22774,
+      "contentType": "text/markdown; charset=utf-8"
+    },
+    {
+      "filename": "illustrated-vocabulary-revision-video-preview.jpg",
+      "bytes": 297890,
+      "contentType": "image/jpeg"
+    },
+    {
+      "filename": "essential-dse-paper-3-tips-revision-video.md",
+      "bytes": 8423,
+      "contentType": "text/markdown; charset=utf-8"
+    },
+    {
+      "filename": "essential-dse-paper-3-tips-revision-video-preview.jpg",
+      "bytes": 220816,
+      "contentType": "image/jpeg"
     }
   ]
 }

@@ -46,6 +46,7 @@ export type CatalogueResource = {
   guideUrl: string;
   previewUrl: string;
   previewAlt: string;
+  previewAspectRatio?: "16 / 9";
   sampleType: SampleType;
   sampleUrl: string;
   outputLabel: string;
@@ -326,6 +327,38 @@ export const resourceCatalogue: CatalogueResource[] = [
     sampleUrl: "https://www.youtube.com/watch?v=j8PG6B4tPuQ",
     outputLabel: "Watch video",
     tags: ["Video", "Creative Writing", "Plot Structure", "CEFR B1"],
+  },
+  {
+    order: 19,
+    slug: "illustrated-vocabulary-revision-video",
+    title: "Illustrated Vocabulary Revision Video",
+    shortTitle: "Illustrated Vocabulary Revision",
+    category: "video",
+    summary: "A picture-led vocabulary revision video with first-letter clues, a three-second countdown, spoken answers and bilingual meaning cards.",
+    guideUrl: staticAsset("illustrated-vocabulary-revision-video.md"),
+    previewUrl: staticAsset("illustrated-vocabulary-revision-video-preview.jpg"),
+    previewAlt: "Vocabulary revision video thumbnail with an anime tutor and a three-second words-and-phrases guessing challenge.",
+    previewAspectRatio: "16 / 9",
+    sampleType: "video",
+    sampleUrl: "https://www.youtube.com/watch?v=QbvH6yuWpz0",
+    outputLabel: "Watch video",
+    tags: ["Video", "Vocabulary", "Revision", "Illustration"],
+  },
+  {
+    order: 20,
+    slug: "essential-dse-paper-3-tips-revision-video",
+    title: "Essential DSE Paper 3 Tips: Revision Video",
+    shortTitle: "DSE Paper 3 Revision Tips",
+    category: "video",
+    summary: "A short, narrated HKDSE Paper 3 revision video with six formal-letter tips, correct and incorrect examples, and reminders about greetings, closings and spelling.",
+    guideUrl: staticAsset("essential-dse-paper-3-tips-revision-video.md"),
+    previewUrl: staticAsset("essential-dse-paper-3-tips-revision-video-preview.jpg"),
+    previewAlt: "HKDSE Paper 3 formal-letter revision thumbnail comparing ‘Your faithfully’ with the correct ‘Yours faithfully’.",
+    previewAspectRatio: "16 / 9",
+    sampleType: "video",
+    sampleUrl: "https://www.youtube.com/watch?v=nFwHOH04VM0",
+    outputLabel: "Watch video",
+    tags: ["Video", "DSE", "Paper 3", "Formal Letters", "Revision"],
   },
 ];
 

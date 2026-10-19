@@ -14,7 +14,7 @@ const requiredSiteAssets = [
 ];
 
 if (catalogue.includes("/manus-storage/")) throw new Error("Catalogue still references Manus managed storage.");
-if (uniqueReferences.length !== 46) throw new Error(`Expected 46 local catalogue assets; found ${uniqueReferences.length}.`);
+if (uniqueReferences.length !== 50) throw new Error(`Expected 50 local catalogue assets; found ${uniqueReferences.length}.`);
 for (const filename of [...uniqueReferences, ...requiredSiteAssets]) {
   await access(join("public", "assets", filename));
   if (!manifestAssets.has(filename)) throw new Error(`Static asset manifest is missing ${filename}.`);
