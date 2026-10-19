@@ -57,9 +57,18 @@ The command runs local checks, commits and pushes `main`, waits for `deploy-page
 - [x] Add the illustrated vocabulary revision video and Essential DSE Paper 3 Tips revision video to the Video archive, matching the supplied YouTube links to their Markdown guides and assigning the next continuous labels S19 and S20.
 - [x] Preserve the supplied guides as versioned public assets; add real video previews, accurate summaries and alt text, canonical YouTube actions labelled ‘Watch video’, and permanent detail pages with top-aligned previews and line-wrapped copyable prompts.
 - [x] Update catalogue, asset manifest and Vitest/browser regression expectations for twenty resources and five video resources. Verify the new desktop/mobile detail pages, video/guide links, downloads, filters, prompt copying, anchors, keyboard focus, reduced motion, accessibility and horizontal overflow as applicable.
-- [ ] Run targeted and full tests, `pnpm check`, `pnpm verify:assets`, `VITE_BASE_PATH=/ai-showcase/ pnpm build`, then commit and push `main` with the GitHub release command; wait for successful Pages deployment and live browser verification before reporting completion.
-- [ ] Mark this release complete, record its commit/deployment evidence, and re-read this task list. Do not use retired Manus checkpoints, private backups, Drive import or `/admin` workflows.
+- [x] Run targeted and full tests, `pnpm check`, `pnpm verify:assets`, `VITE_BASE_PATH=/ai-showcase/ pnpm build`, then commit and push `main` with the GitHub release command; wait for successful Pages deployment and live browser verification before reporting completion.
+- [x] Mark this release complete, record its commit/deployment evidence, and re-read this task list. Do not use retired Manus checkpoints, private backups, Drive import or `/admin` workflows.
 
 ### Local validation
 
 Ten Vitest tests, TypeScript, 50 catalogue assets plus four site assets, the production build, and the expanded browser suite all passed. Source-guide hashes match the supplied files; both original YouTube thumbnails are stored unchanged at 1280 × 720. The new entries use an optional 16:9 preview ratio so their text is not cropped; other resource previews retain their previous layout. Screenshots were captured outside the repository and inspected at desktop/mobile sizes. Local preview uses `VITE_BASE_PATH=/ai-showcase/` as well as the build. A Unicode-decoding issue in the test transport was corrected using native browser fetch; the actual displayed/copied prompt and source guide were already intact.
+
+### Public release evidence
+
+Content commit `a11a9b531d5c9f5565b2c8f947ee74ffce672748` was pushed to `main` with message `feat: add illustrated vocabulary and DSE Paper 3 revision videos`. GitHub Pages deployment [39192742049](https://github.com/ksloenglish/ai-showcase/actions/runs/39192742049) succeeded. The expanded browser regression suite then passed against the live Pages site, including the new full prompts, canonical YouTube actions, uncropped previews, filter/page-top restoration and desktop/tablet/mobile accessibility checks. Live screenshots were saved outside the repository under `/home/ubuntu/ai-showcase-validation/live`.
+
+- S19: https://ksloenglish.github.io/ai-showcase/resources/illustrated-vocabulary-revision-video
+- S20: https://ksloenglish.github.io/ai-showcase/resources/essential-dse-paper-3-tips-revision-video
+
+The completed task record is being committed as documentation only; the public content and tested application source remain the verified content release above.
