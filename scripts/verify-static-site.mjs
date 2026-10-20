@@ -47,6 +47,15 @@ const expectedVideos = [
     videoUrl: "https://www.youtube.com/watch?v=nFwHOH04VM0",
     promptNeedle: "Match the closing to the greeting",
   },
+  {
+    order: 21,
+    slug: "grammar-explainer-video-script-scene-plan-and-captions",
+    title: "Grammar Explainer Video: Script, Scene Plan and Captions",
+    shortTitle: "Grammar Explainer Video",
+    guide: "grammar-explainer-video-script-scene-plan-and-captions.md",
+    videoUrl: "https://www.youtube.com/watch?v=i1YILiniGcw",
+    promptNeedle: "Both must have identical timings.",
+  },
 ];
 
 const archiveUrl = category => `${baseUrl}/resources${category ? `?category=${category}` : ""}`;
@@ -238,9 +247,9 @@ async function checkHomeAboutAndAnchor(page, viewportLabel, { mobile = false, re
   await page.goto(`${baseUrl}/`, { waitUntil: "networkidle" });
   await checkAtPageTop(page, `${viewportLabel} homepage navigation`);
   check((await page.locator("main h1").textContent())?.includes("AI Resource") && (await page.locator("main h1").textContent())?.includes("Showcase"), `${viewportLabel} homepage heading did not load.`);
-  check((await page.getByRole("link", { name: /Browse 20 resources/i }).count()) === 1, `${viewportLabel} homepage does not report the 20-resource archive.`);
+  check((await page.getByRole("link", { name: /Browse 21 resources/i }).count()) === 1, `${viewportLabel} homepage does not report the 21-resource archive.`);
   const videoCategory = page.locator('a[href*="/resources?category=video"]');
-  check((await videoCategory.count()) === 1 && (await videoCategory.textContent())?.includes("5 resources"), `${viewportLabel} homepage does not report five Video resources.`);
+  check((await videoCategory.count()) === 1 && (await videoCategory.textContent())?.includes("6 resources"), `${viewportLabel} homepage does not report six Video resources.`);
 
   await page.keyboard.press("Tab");
   const skipLinkFocused = await page.locator(".skip-link").evaluate(element => document.activeElement === element);
@@ -306,7 +315,7 @@ try {
   await audit(page);
 
   await page.goto(archiveUrl("video"), { waitUntil: "networkidle" });
-  check((await page.locator("main").getByText(/resources shown/).first().textContent())?.trim() === "5 resources shown", "Video filter did not show five resources.");
+  check((await page.locator("main").getByText(/resources shown/).first().textContent())?.trim() === "6 resources shown", "Video filter did not show six resources.");
   check((await page.getByRole("button", { name: "Video", exact: true }).getAttribute("class"))?.includes("filter-chip-active"), "Video filter is not active.");
   const pictureWritingCard = page.locator('a[href*="picture-writing-task-video-bring-the-pictures-to-life"]').first();
   check((await pictureWritingCard.getAttribute("href"))?.endsWith("?category=video"), "Picture-writing video link does not retain the Video filter.");
@@ -316,7 +325,7 @@ try {
   for (const video of expectedVideos) {
     await checkVideoCard(page, video, "Desktop");
   }
-  await saveScreenshot(page, "desktop-video-archive-s19-s20.png");
+  await saveScreenshot(page, "desktop-video-archive.png");
   await audit(page);
 
   await pictureWritingCard.click();
@@ -351,12 +360,14 @@ try {
   await page.getByRole("link", { name: /Back to the archive/i }).evaluate(link => link.click());
   await page.waitForFunction(() => window.location.pathname.endsWith("/resources") && new URLSearchParams(window.location.search).get("category") === "video");
   await checkAtPageTop(page, "Desktop Back to the archive navigation");
-  check((await page.locator("main").getByText(/resources shown/).first().textContent())?.trim() === "5 resources shown", "Back to the archive did not restore the five-resource Video filter.");
+  check((await page.locator("main").getByText(/resources shown/).first().textContent())?.trim() === "6 resources shown", "Back to the archive did not restore the six-resource Video filter.");
   check((await page.getByRole("button", { name: "Video", exact: true }).getAttribute("class"))?.includes("filter-chip-active"), "Back to the archive did not restore the active Video filter.");
 
-  await openVideoDetail(page, expectedVideos[1], "Desktop");
-  await saveScreenshot(page, "desktop-s20-essential-dse-paper-3-tips-revision-video.png");
-  await audit(page);
+  for (const video of expectedVideos.slice(1)) {
+    await openVideoDetail(page, video, "Desktop");
+    await saveScreenshot(page, `desktop-${resourceCode(video.order).toLowerCase()}-${video.slug}.png`);
+    await audit(page);
+  }
 
   await page.goto(`${baseUrl}/resources/dse-english-vocabulary-glossary-from-a-reading-passage`, { waitUntil: "networkidle" });
   const downloadUrl = await page.getByRole("link", { name: "PDF sample", exact: true }).getAttribute("href");
@@ -377,11 +388,11 @@ try {
   await checkHomeAboutAndAnchor(mobilePage, "Mobile", { mobile: true });
 
   await mobilePage.goto(archiveUrl("video"), { waitUntil: "networkidle" });
-  check((await mobilePage.locator("main").getByText(/resources shown/).first().textContent())?.trim() === "5 resources shown", "Mobile Video filter did not show five resources.");
+  check((await mobilePage.locator("main").getByText(/resources shown/).first().textContent())?.trim() === "6 resources shown", "Mobile Video filter did not show six resources.");
   for (const video of expectedVideos) {
     await checkVideoCard(mobilePage, video, "Mobile");
   }
-  await saveScreenshot(mobilePage, "mobile-video-archive-s19-s20.png");
+  await saveScreenshot(mobilePage, "mobile-video-archive.png");
   await audit(mobilePage);
 
   for (const video of expectedVideos) {
@@ -413,6 +424,6 @@ console.log("Static route fallback: PASS");
 console.log("No administration workflow links: PASS");
 console.log("Static local assets: PASS");
 console.log("Archive filter persistence and page-top restoration: PASS");
-console.log("Five Video resources with S17–S20 labels and canonical YouTube actions: PASS");
+console.log("Six Video resources with S17–S21 labels and canonical YouTube actions: PASS");
 console.log("Exact guide prompts, copy actions, wrapping and static previews: PASS");
 console.log("Desktop, tablet and mobile WCAG audit: PASS");

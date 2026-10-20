@@ -360,6 +360,22 @@ export const resourceCatalogue: CatalogueResource[] = [
     outputLabel: "Watch video",
     tags: ["Video", "DSE", "Paper 3", "Formal Letters", "Revision"],
   },
+  {
+    order: 21,
+    slug: "grammar-explainer-video-script-scene-plan-and-captions",
+    title: "Grammar Explainer Video: Script, Scene Plan and Captions",
+    shortTitle: "Grammar Explainer Video",
+    category: "video",
+    summary: "A grammar-book-based video plan with a virtual presenter, scene-by-scene script, quiz and matched English and Traditional Chinese captions. The sample teaches present and past tenses.",
+    guideUrl: staticAsset("grammar-explainer-video-script-scene-plan-and-captions.md"),
+    previewUrl: staticAsset("grammar-explainer-video-script-scene-plan-and-captions-preview.jpg"),
+    previewAlt: "Kayla’s Grammar Lab thumbnail showing present and past, simple and continuous tenses beside an anime presenter with cat-ear headphones and a clock.",
+    previewAspectRatio: "16 / 9",
+    sampleType: "video",
+    sampleUrl: "https://www.youtube.com/watch?v=i1YILiniGcw",
+    outputLabel: "Watch video",
+    tags: ["Video", "Grammar", "Script", "Captions", "Present and Past"],
+  },
 ];
 
 export const resourceBySlug = Object.fromEntries(

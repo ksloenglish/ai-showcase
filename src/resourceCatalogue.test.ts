@@ -26,33 +26,45 @@ const suppliedRevisionVideos = [
     lastLine: "Ask one focused question only if an essential input is missing. Otherwise, proceed.",
     requiredText: "Match the closing to the greeting",
   },
+  {
+    order: 21,
+    slug: "grammar-explainer-video-script-scene-plan-and-captions",
+    videoUrl: "https://www.youtube.com/watch?v=i1YILiniGcw",
+    guideFile: "grammar-explainer-video-script-scene-plan-and-captions.md",
+    sourceHash: "7028c8cad6503743f8703b31f2c5d6ac42bd9235290a523ff02484b14c434225",
+    firstLine: 'You are helping me plan a short grammar explainer video for [YEAR GROUP, e.g. Hong Kong secondary students] at [SCHOOL NAME]. The video is presented by a friendly, trendy virtual study buddy called [STUDY BUDDY NAME]. Address the viewers as "[SCHOOL NAME] students".',
+    lastLine: "Ask one focused question only if an essential input is missing (for example the unit title or the pages). Otherwise, proceed. Do not start building any video until I have approved the script.",
+    requiredText: "Both must have identical timings.",
+  },
 ];
 
 describe("static resource catalogue", () => {
-  it("contains the complete twenty-resource archive with unique slugs and continuous labels", () => {
-    expect(resourceCatalogue).toHaveLength(20);
-    expect(new Set(resourceCatalogue.map(resource => resource.slug)).size).toBe(20);
+  it("contains the complete twenty-one-resource archive with unique slugs and continuous labels", () => {
+    expect(resourceCatalogue).toHaveLength(21);
+    expect(new Set(resourceCatalogue.map(resource => resource.slug)).size).toBe(21);
     expect(new Set(resourceCatalogue.map(resource => resource.category))).toEqual(new Set(categoryDefinitions.map(category => category.id)));
-    expect([...resourceCatalogue.map(resource => resource.order)].sort((left, right) => left - right)).toEqual(Array.from({ length: 20 }, (_, index) => index + 1));
+    expect([...resourceCatalogue.map(resource => resource.order)].sort((left, right) => left - right)).toEqual(Array.from({ length: 21 }, (_, index) => index + 1));
     expect(formatResourceCode(19)).toBe("S19");
     expect(formatResourceCode(20)).toBe("S20");
+    expect(formatResourceCode(21)).toBe("S21");
   });
 
-  it("includes all five classroom videos in the Video category without replacing existing entries", () => {
+  it("includes all six classroom videos in the Video category without replacing existing entries", () => {
     const videos = resourceCatalogue.filter(resource => resource.category === "video");
-    expect(videos).toHaveLength(5);
+    expect(videos).toHaveLength(6);
     expect(videos.map(resource => resource.slug)).toEqual([
       "ai-short-film-production",
       "picture-writing-task-video-bring-the-pictures-to-life",
       "plot-mountain-explainer-video",
       "illustrated-vocabulary-revision-video",
       "essential-dse-paper-3-tips-revision-video",
+      "grammar-explainer-video-script-scene-plan-and-captions",
     ]);
     expect(videos.slice(1, 3).map(resource => resource.sampleUrl)).toEqual([
       "https://www.youtube.com/watch?v=extBbAIXkZ4",
       "https://www.youtube.com/watch?v=j8PG6B4tPuQ",
     ]);
-    expect(videos.slice(1).map(resource => resource.order)).toEqual([17, 18, 19, 20]);
+    expect(videos.slice(1).map(resource => resource.order)).toEqual([17, 18, 19, 20, 21]);
   });
 
   it.each(suppliedRevisionVideos)("matches $slug to its supplied video, guide and preview", ({ order, slug, videoUrl, guideFile }) => {

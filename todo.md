@@ -72,3 +72,14 @@ Content commit `a11a9b531d5c9f5565b2c8f947ee74ffce672748` was pushed to `main` w
 - S20: https://ksloenglish.github.io/ai-showcase/resources/essential-dse-paper-3-tips-revision-video
 
 The completed task record is being committed as documentation only; the public content and tested application source remain the verified content release above.
+
+## 20 October 2026 — Add the supplied grammar explainer video
+
+- [x] Add S21, ‘Grammar Explainer Video: Script, Scene Plan and Captions’, to the Video archive with the supplied video `https://www.youtube.com/watch?v=i1YILiniGcw` and its source Markdown guide preserved unchanged.
+- [x] Verify the video metadata, store its authentic thumbnail as a versioned static asset, and provide an accurate summary, useful alt text, an uncropped top-aligned 16:9 preview and a ‘Watch video’ action on its permanent detail page.
+- [x] Extend catalogue, manifest, Vitest and browser regression coverage for 21 total resources and six videos; verify the new detail page and copyable prompt on desktop/mobile plus existing filters, links, anchors, accessibility, keyboard focus, reduced motion and overflow checks.
+- [ ] Run unit/type/asset/build and browser checks, commit and push `main` through `pnpm release:github`, wait for successful Pages deployment and live regression verification, then mark complete and re-read this task list. Use the GitHub-only workflow; do not touch retired Manus projects, checkpoints, backup branches, Drive import or administration.
+
+### Local validation
+
+Twelve Vitest tests, TypeScript, 52 catalogue assets plus four site assets, the production build and the expanded browser suite all passed. Desktop/mobile S21 screenshots were inspected; the original 1280 × 720 thumbnail is uncropped and top-aligned. The guide was copied byte-for-byte from the supplied file, with SHA-256 `7028c8cad6503743f8703b31f2c5d6ac42bd9235290a523ff02484b14c434225`. Public YouTube metadata confirms the sample as ‘The present and the past | Kayla’s Grammar Lab | K S Lo English’. The reusable guide describes the output plan; its caption/script requirements are not asserted as independently verified features of the finished sample. No existing resource content or design was changed.
