@@ -78,8 +78,14 @@ The completed task record is being committed as documentation only; the public c
 - [x] Add S21, ‘Grammar Explainer Video: Script, Scene Plan and Captions’, to the Video archive with the supplied video `https://www.youtube.com/watch?v=i1YILiniGcw` and its source Markdown guide preserved unchanged.
 - [x] Verify the video metadata, store its authentic thumbnail as a versioned static asset, and provide an accurate summary, useful alt text, an uncropped top-aligned 16:9 preview and a ‘Watch video’ action on its permanent detail page.
 - [x] Extend catalogue, manifest, Vitest and browser regression coverage for 21 total resources and six videos; verify the new detail page and copyable prompt on desktop/mobile plus existing filters, links, anchors, accessibility, keyboard focus, reduced motion and overflow checks.
-- [ ] Run unit/type/asset/build and browser checks, commit and push `main` through `pnpm release:github`, wait for successful Pages deployment and live regression verification, then mark complete and re-read this task list. Use the GitHub-only workflow; do not touch retired Manus projects, checkpoints, backup branches, Drive import or administration.
+- [x] Run unit/type/asset/build and browser checks, commit and push `main` through `pnpm release:github`, wait for successful Pages deployment and live regression verification, then mark complete and re-read this task list. Use the GitHub-only workflow; do not touch retired Manus projects, checkpoints, backup branches, Drive import or administration.
 
 ### Local validation
 
 Twelve Vitest tests, TypeScript, 52 catalogue assets plus four site assets, the production build and the expanded browser suite all passed. Desktop/mobile S21 screenshots were inspected; the original 1280 × 720 thumbnail is uncropped and top-aligned. The guide was copied byte-for-byte from the supplied file, with SHA-256 `7028c8cad6503743f8703b31f2c5d6ac42bd9235290a523ff02484b14c434225`. Public YouTube metadata confirms the sample as ‘The present and the past | Kayla’s Grammar Lab | K S Lo English’. The reusable guide describes the output plan; its caption/script requirements are not asserted as independently verified features of the finished sample. No existing resource content or design was changed.
+
+### Public release evidence
+
+Content commit `16040d9205f7b22e5ed3e77b6d8f6fcf23a622a4` was pushed to `main` with message `feat: add grammar explainer video resource S21`. GitHub Pages deployment [39403848492](https://github.com/ksloenglish/ai-showcase/actions/runs/39403848492) succeeded. The live browser suite passed for 21 total resources and six videos, including S21’s exact complete prompt, copying, static uncropped preview, canonical YouTube action and desktop/mobile detail layout. Existing navigation, archive filters, anchors, reduced motion, keyboard focus, accessibility and overflow checks also passed. The completed task record is a documentation-only follow-up; the tested public content remains this release.
+
+S21: https://ksloenglish.github.io/ai-showcase/resources/grammar-explainer-video-script-scene-plan-and-captions
