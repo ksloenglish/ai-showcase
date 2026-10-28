@@ -280,6 +280,16 @@
       "filename": "grammar-explainer-video-script-scene-plan-and-captions-preview.jpg",
       "bytes": 325415,
       "contentType": "image/jpeg"
+    },
+    {
+      "filename": "oxbridge-news-reader.md",
+      "bytes": 14270,
+      "contentType": "text/markdown; charset=utf-8"
+    },
+    {
+      "filename": "oxbridge-news-reader-preview.webp",
+      "bytes": 52284,
+      "contentType": "image/webp"
     }
   ]
 }

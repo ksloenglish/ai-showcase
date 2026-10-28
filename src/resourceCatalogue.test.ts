@@ -39,14 +39,15 @@ const suppliedRevisionVideos = [
 ];
 
 describe("static resource catalogue", () => {
-  it("contains the complete twenty-one-resource archive with unique slugs and continuous labels", () => {
-    expect(resourceCatalogue).toHaveLength(21);
-    expect(new Set(resourceCatalogue.map(resource => resource.slug)).size).toBe(21);
+  it("contains the complete twenty-two-resource archive with unique slugs and continuous labels", () => {
+    expect(resourceCatalogue).toHaveLength(22);
+    expect(new Set(resourceCatalogue.map(resource => resource.slug)).size).toBe(22);
     expect(new Set(resourceCatalogue.map(resource => resource.category))).toEqual(new Set(categoryDefinitions.map(category => category.id)));
-    expect([...resourceCatalogue.map(resource => resource.order)].sort((left, right) => left - right)).toEqual(Array.from({ length: 21 }, (_, index) => index + 1));
+    expect([...resourceCatalogue.map(resource => resource.order)].sort((left, right) => left - right)).toEqual(Array.from({ length: 22 }, (_, index) => index + 1));
     expect(formatResourceCode(19)).toBe("S19");
     expect(formatResourceCode(20)).toBe("S20");
     expect(formatResourceCode(21)).toBe("S21");
+    expect(formatResourceCode(22)).toBe("S22");
   });
 
   it("includes all six classroom videos in the Video category without replacing existing entries", () => {
@@ -85,6 +86,46 @@ describe("static resource catalogue", () => {
     expect(guide.prompt.startsWith(firstLine)).toBe(true);
     expect(guide.prompt.endsWith(lastLine)).toBe(true);
     expect(guide.prompt).toContain(requiredText);
+    for (const section of [guide.whatThisMakes, guide.whatYouNeed, guide.howToUse, guide.beforeClassroomUse, guide.fallback, guide.whatYouCanChange]) {
+      expect(section.length).toBeGreaterThan(20);
+    }
+    expect(guide.extraSections).toHaveLength(0);
+  });
+
+  it("adds S22 as a sixth interactive resource without replacing earlier entries", () => {
+    const interactive = resourceCatalogue.filter(resource => resource.category === "interactive");
+    expect(interactive.map(resource => resource.slug)).toEqual([
+      "vocabulary-revision-website",
+      "four-option-vocabulary-practice-website",
+      "grammar-challenge-website",
+      "solidmemory-leaderboard-and-awards-website",
+      "historical-interview-character-for-students",
+      "oxbridge-news-reader",
+    ]);
+    expect(interactive.at(-1)).toMatchObject({
+      order: 22,
+      title: "Oxbridge News Reader",
+      sampleType: "live-site",
+      sampleUrl: "https://ksloenglish.github.io/oxbridge-news-reader/",
+      outputLabel: "Open live website",
+      guideUrl: "/assets/oxbridge-news-reader.md",
+      previewUrl: "/assets/oxbridge-news-reader-preview.webp",
+      previewAspectRatio: "16 / 9",
+      tags: ["News", "Reading", "Vocabulary", "CEFR", "Website"],
+    });
+  });
+
+  it("preserves the News Reader guide and complete prompt without displaying its import note", () => {
+    const source = readFileSync(resolve("public/assets/oxbridge-news-reader.md"), "utf8");
+    expect(createHash("sha256").update(source).digest("hex")).toBe("d9c195ba4cec07218277e258ee60df5996da8f05c20a761112ff66d5f62aa7c7");
+    expect(source).toContain("## Note for adding this to the AI Resource Showcase");
+    const guide = parseResourceMarkdown(source);
+    const expectedPrompt = source.match(/## Copy-and-paste prompt\s*\n\s*```text\n([\s\S]*?)\n```/)?.[1];
+    expect(expectedPrompt).toBeTruthy();
+    expect(guide.prompt).toBe(expectedPrompt?.trim());
+    expect(guide.prompt).toContain("The browser must load only the published snapshot from the same site origin.");
+    expect(guide.prompt).toContain("The reader must not call any AI model from the browser.");
+    expect(guide.prompt.endsWith("If you cannot create the files, test the website, or publish it, say so clearly before claiming completion. Offer the closest useful alternative. Ask one focused question only if an essential detail is missing. Otherwise, proceed.")).toBe(true);
     for (const section of [guide.whatThisMakes, guide.whatYouNeed, guide.howToUse, guide.beforeClassroomUse, guide.fallback, guide.whatYouCanChange]) {
       expect(section.length).toBeGreaterThan(20);
     }

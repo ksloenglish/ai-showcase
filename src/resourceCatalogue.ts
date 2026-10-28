@@ -376,6 +376,22 @@ export const resourceCatalogue: CatalogueResource[] = [
     outputLabel: "Watch video",
     tags: ["Video", "Grammar", "Script", "Captions", "Present and Past"],
   },
+  {
+    order: 22,
+    slug: "oxbridge-news-reader",
+    title: "Oxbridge News Reader",
+    shortTitle: "Oxbridge News Reader",
+    category: "interactive",
+    summary: "A school English news reader with approved sources, A1–C2 vocabulary highlighting, Traditional Chinese word cards, British English pronunciation and a browser-saved Word Bank with CSV export.",
+    guideUrl: staticAsset("oxbridge-news-reader.md"),
+    previewUrl: staticAsset("oxbridge-news-reader-preview.webp"),
+    previewAlt: "Oxbridge News Reader News Desk showing CEFR highlight controls, news-source selection, Check for updates and English story listings with HKT publication times.",
+    previewAspectRatio: "16 / 9",
+    sampleType: "live-site",
+    sampleUrl: "https://ksloenglish.github.io/oxbridge-news-reader/",
+    outputLabel: "Open live website",
+    tags: ["News", "Reading", "Vocabulary", "CEFR", "Website"],
+  },
 ];
 
 export const resourceBySlug = Object.fromEntries(

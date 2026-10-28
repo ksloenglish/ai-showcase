@@ -67,6 +67,9 @@ export function parseResourceMarkdown(markdown: string): ParsedGuide {
       guide.prompt = extractPrompt(section.body);
       continue;
     }
+    if (section.heading === "Note for adding this to the AI Resource Showcase") {
+      continue;
+    }
     const key = sectionAliases[section.heading];
     if (key) {
       guide[key] = section.body;

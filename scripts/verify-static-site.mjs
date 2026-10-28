@@ -58,11 +58,55 @@ const expectedVideos = [
   },
 ];
 
+const expectedInteractive = {
+  order: 22,
+  slug: "oxbridge-news-reader",
+  title: "Oxbridge News Reader",
+  shortTitle: "Oxbridge News Reader",
+  category: "interactive",
+  guide: "oxbridge-news-reader.md",
+  preview: "oxbridge-news-reader-preview.webp",
+  previewAspectRatio: 16 / 9,
+  sampleUrl: "https://ksloenglish.github.io/oxbridge-news-reader/",
+  outputLabel: "Open live website",
+  promptNeedle: "The browser must load only the published snapshot from the same site origin.",
+  finalPromptLine: "If you cannot create the files, test the website, or publish it, say so clearly before claiming completion. Offer the closest useful alternative. Ask one focused question only if an essential detail is missing. Otherwise, proceed.",
+  guideSections: [
+    "What this makes",
+    "What you need",
+    "How to use it",
+    "Copy-and-paste prompt",
+    "Before you use the result with students",
+    "If your AI assistant cannot make the file you want",
+    "What you can change",
+  ],
+  visibleGuideSections: [
+    "What this makes",
+    "What you need",
+    "How to use it",
+    "Copy the tested prompt",
+    "Before classroom use",
+    "If your assistant cannot make the file",
+    "What you can change",
+  ],
+  importOnlyHeading: "Note for adding this to the AI Resource Showcase",
+};
+
 const archiveUrl = category => `${baseUrl}/resources${category ? `?category=${category}` : ""}`;
 const detailUrl = (slug, category = "") => `${baseUrl}/resources/${slug}${category ? `?category=${category}` : ""}`;
-const expectedGuideUrl = filename => new URL(`assets/${filename}`, `${baseUrl}/`).href;
+const expectedAssetUrl = filename => new URL(`assets/${filename}`, `${baseUrl}/`).href;
+const expectedGuideUrl = filename => expectedAssetUrl(filename);
 const resourceCard = (page, slug) => page.locator(`article.resource-card:has(a[href*="${slug}"])`);
 const resourceCode = order => `S${String(order).padStart(2, "0")}`;
+
+function resolvesToExpectedAsset(src, pageUrl, filename) {
+  if (!src) return false;
+  try {
+    return new URL(src, pageUrl).href === expectedAssetUrl(filename);
+  } catch {
+    return false;
+  }
+}
 
 function extractPromptFromGuide(markdown) {
   const lines = markdown.replace(/\r\n/g, "\n").split("\n");
@@ -97,7 +141,12 @@ async function audit(page) {
 
 async function saveScreenshot(page, filename) {
   if (!screenshotDir) return;
-  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+  await page.evaluate(async () => {
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+    window.scrollTo({ top: 0, behavior: "instant" });
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    window.scrollTo({ top: 0, behavior: "instant" });
+  });
   await page.waitForFunction(() => window.scrollY <= 1);
   await page.screenshot({ path: join(screenshotDir, filename), fullPage: true });
 }
@@ -141,13 +190,33 @@ async function checkVideoCard(page, video, viewportLabel) {
   check(Math.abs(cardRatio - 16 / 9) < 0.02, `${viewportLabel} ${video.title} card crops its 16:9 thumbnail.`);
 }
 
-async function waitForVideoGuideResponse(page, video) {
-  const guideUrl = expectedGuideUrl(video.guide);
+async function checkInteractiveCard(page, interactive, viewportLabel) {
+  const card = resourceCard(page, interactive.slug);
+  const cardCount = await card.count();
+  check(cardCount === 1, `${viewportLabel} archive does not show exactly one ${resourceCode(interactive.order)} card.`);
+  if (cardCount !== 1) return;
+
+  check((await card.locator(".resource-code").textContent())?.trim() === resourceCode(interactive.order), `${viewportLabel} ${interactive.title} card does not show ${resourceCode(interactive.order)}.`);
+  check((await card.getByRole("heading").textContent())?.trim() === interactive.shortTitle, `${viewportLabel} ${interactive.title} card title is incorrect.`);
+  check((await card.locator("a").getAttribute("href"))?.endsWith(`/${interactive.slug}?category=${interactive.category}`), `${viewportLabel} ${interactive.title} card does not retain the Interactive filter.`);
+
+  const preview = card.locator(".resource-card-media img");
+  const previewSrc = await preview.getAttribute("src");
+  check(resolvesToExpectedAsset(previewSrc, page.url(), interactive.preview), `${viewportLabel} ${interactive.title} card preview does not use its exact static asset URL.`);
+  check((await preview.getAttribute("alt"))?.trim().length > 0, `${viewportLabel} ${interactive.title} card preview has no useful alt text.`);
+  const objectPosition = await preview.evaluate(image => getComputedStyle(image).objectPosition);
+  check(isTopCenter(objectPosition), `${viewportLabel} ${interactive.title} card preview is not object-positioned at top center.`);
+  const cardRatio = await card.locator(".resource-card-media").evaluate(element => element.clientWidth / element.clientHeight);
+  check(Math.abs(cardRatio - interactive.previewAspectRatio) < 0.02, `${viewportLabel} ${interactive.title} card does not crop its 16:9 preview.`);
+}
+
+async function waitForGuideResponse(page, resource) {
+  const guideUrl = expectedGuideUrl(resource.guide);
   const response = await page.waitForResponse(
     candidate => candidate.url() === guideUrl && candidate.request().resourceType() === "fetch",
     { timeout: 15_000 },
   );
-  check(response.ok(), `${video.title} guide did not load from ${guideUrl}.`);
+  check(response.ok(), `${resource.title} guide did not load from ${guideUrl}.`);
   // Match the application's native UTF-8 decoding; some CDP response-text
   // transports return non-ASCII Markdown as a binary/Latin-1 string.
   const markdown = await page.evaluate(async url => {
@@ -158,7 +227,7 @@ async function waitForVideoGuideResponse(page, video) {
   return { guideUrl, markdown };
 }
 
-async function checkPromptPanel(page, video, expectedPrompt, viewportLabel) {
+async function checkPromptPanel(page, resource, expectedPrompt, viewportLabel) {
   const promptCode = page.locator(".prompt-code");
   const promptPre = promptCode.locator("pre");
   await promptPre.waitFor({ state: "visible" });
@@ -166,33 +235,33 @@ async function checkPromptPanel(page, video, expectedPrompt, viewportLabel) {
 
   const renderedPrompt = await promptPre.textContent();
   const lastLines = expectedPrompt.trimEnd().split("\n").slice(-2).join("\n");
-  check(renderedPrompt === expectedPrompt, `${viewportLabel} ${video.title} does not render the complete guide prompt exactly.`);
-  check(renderedPrompt?.trimEnd().endsWith(lastLines), `${viewportLabel} ${video.title} prompt omits or changes its final lines.`);
-  check(renderedPrompt?.includes(video.promptNeedle), `${viewportLabel} ${video.title} prompt does not contain its distinctive instruction.`);
-  if (video.minimumPromptLength) {
-    check(expectedPrompt.length >= video.minimumPromptLength, `${video.title} prompt should be longer than 16,000 characters.`);
+  check(renderedPrompt === expectedPrompt, `${viewportLabel} ${resource.title} does not render the complete guide prompt exactly.`);
+  check(renderedPrompt?.trimEnd().endsWith(lastLines), `${viewportLabel} ${resource.title} prompt omits or changes its final lines.`);
+  check(renderedPrompt?.includes(resource.promptNeedle), `${viewportLabel} ${resource.title} prompt does not contain its distinctive instruction.`);
+  if (resource.minimumPromptLength) {
+    check(expectedPrompt.length >= resource.minimumPromptLength, `${resource.title} prompt should be longer than 16,000 characters.`);
   }
 
   const promptStyle = await promptPre.evaluate(element => ({
     whiteSpace: getComputedStyle(element).whiteSpace,
     wordBreak: getComputedStyle(element).wordBreak,
   }));
-  check(promptStyle.whiteSpace === "pre-wrap" && promptStyle.wordBreak === "break-word", `${viewportLabel} ${video.title} prompt does not wrap long lines.`);
+  check(promptStyle.whiteSpace === "pre-wrap" && promptStyle.wordBreak === "break-word", `${viewportLabel} ${resource.title} prompt does not wrap long lines.`);
   const promptDoesNotOverflow = await promptCode.evaluate(element => element.scrollWidth <= element.clientWidth + 1);
-  check(promptDoesNotOverflow, `${viewportLabel} ${video.title} prompt panel has horizontal overflow.`);
-  check((await promptCode.getAttribute("tabindex")) === "0", `${viewportLabel} ${video.title} prompt panel is not keyboard focusable.`);
+  check(promptDoesNotOverflow, `${viewportLabel} ${resource.title} prompt panel has horizontal overflow.`);
+  check((await promptCode.getAttribute("tabindex")) === "0", `${viewportLabel} ${resource.title} prompt panel is not keyboard focusable.`);
 
   const copyButton = page.getByRole("button", { name: "Copy prompt", exact: true });
   await copyButton.click();
   const copiedButton = page.getByRole("button", { name: "Copied", exact: true });
   await copiedButton.waitFor({ state: "visible" });
   const copiedPrompt = await page.evaluate(() => window.__staticSiteCopiedPrompt);
-  check(copiedPrompt === expectedPrompt, `${viewportLabel} ${video.title} copied prompt is not the complete exact guide prompt.`);
+  check(copiedPrompt === expectedPrompt, `${viewportLabel} ${resource.title} copied prompt is not the complete exact guide prompt.`);
 
   await copiedButton.focus();
   await page.keyboard.press("Tab");
   const promptHasKeyboardFocus = await promptCode.evaluate(element => document.activeElement === element);
-  check(promptHasKeyboardFocus, `${viewportLabel} ${video.title} prompt panel is skipped by keyboard focus.`);
+  check(promptHasKeyboardFocus, `${viewportLabel} ${resource.title} prompt panel is skipped by keyboard focus.`);
 }
 
 async function checkVideoDetail(page, video, guideResponse, viewportLabel, { mobile = false } = {}) {
@@ -236,8 +305,66 @@ async function checkVideoDetail(page, video, guideResponse, viewportLabel, { mob
   await checkPromptPanel(page, video, expectedPrompt, viewportLabel);
 }
 
+async function checkInteractiveDetail(page, interactive, guideResponse, viewportLabel, { mobile = false } = {}) {
+  const { guideUrl, markdown } = await guideResponse;
+  const expectedPrompt = extractPromptFromGuide(markdown);
+  check(markdown.includes("## Copy-and-paste prompt"), `${interactive.title} guide at ${guideUrl} has no Copy-and-paste prompt section.`);
+  for (const section of interactive.guideSections) {
+    check(markdown.includes(`## ${section}`), `${interactive.title} raw guide at ${guideUrl} does not retain its ${section} section.`);
+  }
+  check(markdown.includes(`## ${interactive.importOnlyHeading}`), `${interactive.title} raw guide at ${guideUrl} does not retain its import-only note.`);
+  check(expectedPrompt.length > 0, `${interactive.title} guide at ${guideUrl} has no extractable prompt.`);
+  check(expectedPrompt.includes(interactive.promptNeedle), `${interactive.title} guide at ${guideUrl} does not contain its distinctive instruction.`);
+  check(expectedPrompt.trimEnd().endsWith(interactive.finalPromptLine), `${interactive.title} guide at ${guideUrl} does not end with its required delivery fallback.`);
+  check(new URL(page.url()).pathname.endsWith(`/resources/${interactive.slug}`), `${viewportLabel} ${interactive.title} did not remain on its rendered detail page while checking the guide.`);
+  check(new URL(page.url()).searchParams.get("category") === interactive.category, `${viewportLabel} ${interactive.title} detail navigation did not retain the Interactive filter.`);
+
+  const title = page.locator(".resource-detail-hero h1");
+  check((await title.textContent())?.trim() === interactive.title, `${viewportLabel} ${interactive.title} detail page did not load.`);
+  check((await page.locator(".resource-detail-code").textContent())?.trim() === resourceCode(interactive.order), `${viewportLabel} ${interactive.title} detail page does not show ${resourceCode(interactive.order)}.`);
+  for (const section of interactive.visibleGuideSections) {
+    check((await page.getByRole("heading", { name: section, exact: true }).count()) === 1, `${viewportLabel} ${interactive.title} does not visibly render its ${section} section.`);
+  }
+  const visibleDetailText = await page.locator("main").innerText();
+  check(!visibleDetailText.includes(interactive.importOnlyHeading), `${viewportLabel} ${interactive.title} visibly renders the import-only showcase note.`);
+
+  const preview = page.locator(".resource-preview-stage");
+  const previewImage = preview.locator("img");
+  await previewImage.waitFor({ state: "visible" });
+  const previewSrc = await previewImage.getAttribute("src");
+  check(resolvesToExpectedAsset(previewSrc, page.url(), interactive.preview), `${viewportLabel} ${interactive.title} detail preview does not use its exact static asset URL.`);
+  check((await previewImage.getAttribute("alt"))?.trim().length > 0, `${viewportLabel} ${interactive.title} detail preview has no useful alt text.`);
+  const previewPosition = await previewImage.evaluate(image => getComputedStyle(image).objectPosition);
+  check(isTopCenter(previewPosition), `${viewportLabel} ${interactive.title} detail preview is not object-positioned at top center.`);
+  const detailRatio = await previewImage.evaluate(image => image.clientWidth / image.clientHeight);
+  check(Math.abs(detailRatio - interactive.previewAspectRatio) < 0.02, `${viewportLabel} ${interactive.title} detail does not crop its 16:9 preview.`);
+  const previewPrecedesExplanation = await preview.evaluate(element => {
+    const heading = document.querySelector(".resource-detail-hero h1");
+    return Boolean(heading && (element.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING));
+  });
+  check(previewPrecedesExplanation, `${viewportLabel} ${interactive.title} preview is not before its explanation in the detail structure.`);
+  const [previewBox, titleBox] = await Promise.all([preview.boundingBox(), title.boundingBox()]);
+  if (mobile) {
+    check(Boolean(previewBox && titleBox && previewBox.y + previewBox.height <= titleBox.y), `${viewportLabel} ${interactive.title} preview is not above its explanation.`);
+  } else {
+    check(Boolean(previewBox && titleBox && previewBox.y <= titleBox.y), `${viewportLabel} ${interactive.title} preview is not top-aligned before its explanation.`);
+  }
+
+  const action = page.getByRole("link", { name: interactive.outputLabel, exact: true });
+  const actionCount = await action.count();
+  check(actionCount === 1, `${viewportLabel} ${interactive.title} does not expose exactly one ${interactive.outputLabel} action.`);
+  if (actionCount === 1) {
+    check((await action.getAttribute("href")) === interactive.sampleUrl, `${viewportLabel} ${interactive.title} action does not use its canonical live-site URL.`);
+    check((await action.getAttribute("target")) === "_blank", `${viewportLabel} ${interactive.title} live-site action does not open in a new tab.`);
+    check((await action.getAttribute("rel")) === "noreferrer", `${viewportLabel} ${interactive.title} live-site action does not use safe external-link rel attributes.`);
+  }
+  check((await page.getByRole("link", { name: "Watch video", exact: true }).count()) === 0, `${viewportLabel} ${interactive.title} incorrectly labels its live-site action as Watch video.`);
+
+  await checkPromptPanel(page, interactive, expectedPrompt, viewportLabel);
+}
+
 async function openVideoDetail(page, video, viewportLabel, options = {}) {
-  const guideResponse = waitForVideoGuideResponse(page, video);
+  const guideResponse = waitForGuideResponse(page, video);
   await page.goto(detailUrl(video.slug, "video"), { waitUntil: "networkidle" });
   await checkAtPageTop(page, `${viewportLabel} ${video.title} detail navigation`);
   await checkVideoDetail(page, video, guideResponse, viewportLabel, options);
@@ -247,9 +374,11 @@ async function checkHomeAboutAndAnchor(page, viewportLabel, { mobile = false, re
   await page.goto(`${baseUrl}/`, { waitUntil: "networkidle" });
   await checkAtPageTop(page, `${viewportLabel} homepage navigation`);
   check((await page.locator("main h1").textContent())?.includes("AI Resource") && (await page.locator("main h1").textContent())?.includes("Showcase"), `${viewportLabel} homepage heading did not load.`);
-  check((await page.getByRole("link", { name: /Browse 21 resources/i }).count()) === 1, `${viewportLabel} homepage does not report the 21-resource archive.`);
+  check((await page.getByRole("link", { name: /Browse 22 resources/i }).count()) === 1, `${viewportLabel} homepage does not report the 22-resource archive.`);
   const videoCategory = page.locator('a[href*="/resources?category=video"]');
   check((await videoCategory.count()) === 1 && (await videoCategory.textContent())?.includes("6 resources"), `${viewportLabel} homepage does not report six Video resources.`);
+  const interactiveCategory = page.locator('a.category-index[href*="/resources?category=interactive"]');
+  check((await interactiveCategory.count()) === 1 && (await interactiveCategory.textContent())?.includes("6 resources"), `${viewportLabel} homepage does not report six Interactive resources.`);
 
   await page.keyboard.press("Tab");
   const skipLinkFocused = await page.locator(".skip-link").evaluate(element => document.activeElement === element);
@@ -348,7 +477,7 @@ try {
   const s19Card = resourceCard(page, s19.slug).locator("a");
   await page.goto(archiveUrl("video"), { waitUntil: "networkidle" });
   await s19Card.scrollIntoViewIfNeeded();
-  const s19GuideResponse = waitForVideoGuideResponse(page, s19);
+  const s19GuideResponse = waitForGuideResponse(page, s19);
   await s19Card.click();
   await page.waitForLoadState("networkidle");
   await checkAtPageTop(page, `Desktop ${s19.title} card navigation`);
@@ -368,6 +497,30 @@ try {
     await saveScreenshot(page, `desktop-${resourceCode(video.order).toLowerCase()}-${video.slug}.png`);
     await audit(page);
   }
+
+  const s22 = expectedInteractive;
+  await page.goto(archiveUrl(s22.category), { waitUntil: "networkidle" });
+  check((await page.locator("main").getByText(/resources shown/).first().textContent())?.trim() === "6 resources shown", "Interactive filter did not show six resources.");
+  check((await page.getByRole("button", { name: "Interactive", exact: true }).getAttribute("class"))?.includes("filter-chip-active"), "Interactive filter is not active.");
+  await checkInteractiveCard(page, s22, "Desktop");
+  const s22Card = resourceCard(page, s22.slug).locator("a");
+  await s22Card.evaluate(element => element.scrollIntoView({ block: "end" }));
+  await page.waitForFunction(() => window.scrollY > 1);
+  const s22GuideResponse = waitForGuideResponse(page, s22);
+  await s22Card.click();
+  await page.waitForLoadState("networkidle");
+  await checkAtPageTop(page, `Desktop ${s22.title} card navigation`);
+  await checkInteractiveDetail(page, s22, s22GuideResponse, "Desktop");
+  await saveScreenshot(page, "desktop-s22-oxbridge-news-reader.png");
+  await audit(page);
+
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await page.getByRole("link", { name: /Back to the archive/i }).evaluate(link => link.click());
+  await page.waitForFunction(category => window.location.pathname.endsWith("/resources") && new URLSearchParams(window.location.search).get("category") === category, s22.category);
+  await checkAtPageTop(page, "Desktop S22 Back to the archive navigation");
+  check((await page.locator("main").getByText(/resources shown/).first().textContent())?.trim() === "6 resources shown", "S22 return to archive did not restore the six-resource Interactive filter.");
+  check((await page.getByRole("button", { name: "Interactive", exact: true }).getAttribute("class"))?.includes("filter-chip-active"), "S22 return to archive did not restore the active Interactive filter.");
+  await audit(page);
 
   await page.goto(`${baseUrl}/resources/dse-english-vocabulary-glossary-from-a-reading-passage`, { waitUntil: "networkidle" });
   const downloadUrl = await page.getByRole("link", { name: "PDF sample", exact: true }).getAttribute("href");
@@ -401,6 +554,29 @@ try {
     await audit(mobilePage);
   }
 
+  await mobilePage.goto(archiveUrl(s22.category), { waitUntil: "networkidle" });
+  check((await mobilePage.locator("main").getByText(/resources shown/).first().textContent())?.trim() === "6 resources shown", "Mobile Interactive filter did not show six resources.");
+  check((await mobilePage.getByRole("button", { name: "Interactive", exact: true }).getAttribute("class"))?.includes("filter-chip-active"), "Mobile Interactive filter is not active.");
+  await checkInteractiveCard(mobilePage, s22, "Mobile");
+  const mobileS22Card = resourceCard(mobilePage, s22.slug).locator("a");
+  await mobileS22Card.evaluate(element => element.scrollIntoView({ block: "end" }));
+  await mobilePage.waitForFunction(() => window.scrollY > 1);
+  const mobileS22GuideResponse = waitForGuideResponse(mobilePage, s22);
+  await mobileS22Card.click();
+  await mobilePage.waitForLoadState("networkidle");
+  await checkAtPageTop(mobilePage, `Mobile ${s22.title} card navigation`);
+  await checkInteractiveDetail(mobilePage, s22, mobileS22GuideResponse, "Mobile", { mobile: true });
+  await saveScreenshot(mobilePage, "mobile-s22-oxbridge-news-reader.png");
+  await audit(mobilePage);
+
+  await mobilePage.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await mobilePage.getByRole("link", { name: /Back to the archive/i }).evaluate(link => link.click());
+  await mobilePage.waitForFunction(category => window.location.pathname.endsWith("/resources") && new URLSearchParams(window.location.search).get("category") === category, s22.category);
+  await checkAtPageTop(mobilePage, "Mobile S22 Back to the archive navigation");
+  check((await mobilePage.locator("main").getByText(/resources shown/).first().textContent())?.trim() === "6 resources shown", "Mobile S22 return to archive did not restore the six-resource Interactive filter.");
+  check((await mobilePage.getByRole("button", { name: "Interactive", exact: true }).getAttribute("class"))?.includes("filter-chip-active"), "Mobile S22 return to archive did not restore the active Interactive filter.");
+  await audit(mobilePage);
+
   await mobilePage.goto(detailUrl("plot-mountain-explainer-video", "video"), { waitUntil: "networkidle" });
   check((await mobilePage.locator("h1").textContent())?.includes("Plot Mountain Explainer Video"), "Mobile plot mountain video detail page did not load.");
   check((await mobilePage.locator(".resource-detail-code").textContent())?.trim() === "S18", "Mobile plot mountain video does not show label S18.");
@@ -424,6 +600,8 @@ console.log("Static route fallback: PASS");
 console.log("No administration workflow links: PASS");
 console.log("Static local assets: PASS");
 console.log("Archive filter persistence and page-top restoration: PASS");
+console.log("Twenty-two resources, including six Video and six Interactive resources: PASS");
 console.log("Six Video resources with S17–S21 labels and canonical YouTube actions: PASS");
+console.log("S22 Oxbridge News Reader live-site action, exact prompt, static preview and import-note boundary: PASS");
 console.log("Exact guide prompts, copy actions, wrapping and static previews: PASS");
 console.log("Desktop, tablet and mobile WCAG audit: PASS");
