@@ -38,6 +38,33 @@ const suppliedRevisionVideos = [
   },
 ];
 
+const suppliedUpdatedDseExamples = [
+  {
+    order: 2,
+    slug: "dse-news-article-cloze-exercise",
+    sampleFile: "dse-news-article-cloze-exercise_1ba8cff2.pdf",
+    previewFile: "dse-news-article-cloze-exercise-preview_1ba8cff2.webp",
+    sourceHash: "1ba8cff2a82f75d69a675b312955ff61aba9436fbde3e7801332b4f4306fe488",
+    previewAlt: "Environmental Willpower",
+  },
+  {
+    order: 3,
+    slug: "dse-news-fact-sheet-cloze-exercise",
+    sampleFile: "dse-news-fact-sheet-cloze-exercise_19a7abce.pdf",
+    previewFile: "dse-news-fact-sheet-cloze-exercise-preview_19a7abce.webp",
+    sourceHash: "19a7abce6be6caf48f35d81fcf6995425e4ae20a7813256277172750997b6bdd",
+    previewAlt: "Social Media’s Harmful Impact",
+  },
+  {
+    order: 4,
+    slug: "dse-news-article-proofreading-exercise",
+    sampleFile: "dse-news-article-proofreading-exercise_cbd572d5.pdf",
+    previewFile: "dse-news-article-proofreading-exercise-preview_cbd572d5.webp",
+    sourceHash: "cbd572d56213a8b329f71051384ba4eee86bbe8d5d732df483bba6ce56f92c98",
+    previewAlt: "Be Proactive to Get Active",
+  },
+];
+
 describe("static resource catalogue", () => {
   it("contains the complete twenty-two-resource archive with unique slugs and continuous labels", () => {
     expect(resourceCatalogue).toHaveLength(22);
@@ -90,6 +117,23 @@ describe("static resource catalogue", () => {
       expect(section.length).toBeGreaterThan(20);
     }
     expect(guide.extraSections).toHaveLength(0);
+  });
+
+  it.each(suppliedUpdatedDseExamples)("uses the exact supplied $slug example PDF and an uncropped page-one preview", ({ order, slug, sampleFile, previewFile, sourceHash, previewAlt }) => {
+    const resource = resourceCatalogue.find(item => item.slug === slug);
+    expect(resource).toMatchObject({
+      order,
+      category: "text-based",
+      sampleType: "download",
+      sampleUrl: `/assets/${sampleFile}`,
+      previewUrl: `/assets/${previewFile}`,
+      previewFit: "contain",
+      outputLabel: "PDF sample",
+    });
+    expect(resource?.previewAlt).toContain(previewAlt);
+    const sample = readFileSync(resolve("public/assets", sampleFile));
+    expect(createHash("sha256").update(sample).digest("hex")).toBe(sourceHash);
+    expect(sample.subarray(0, 5).toString()).toBe("%PDF-");
   });
 
   it("adds S22 as a sixth interactive resource without replacing earlier entries", () => {

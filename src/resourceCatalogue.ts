@@ -47,6 +47,7 @@ export type CatalogueResource = {
   previewUrl: string;
   previewAlt: string;
   previewAspectRatio?: "16 / 9";
+  previewFit?: "cover" | "contain";
   sampleType: SampleType;
   sampleUrl: string;
   outputLabel: string;
@@ -79,10 +80,11 @@ export const resourceCatalogue: CatalogueResource[] = [
     category: "text-based",
     summary: "An HKDSE-style cloze activity with a checked transcription, student worksheet and two levels of answer key.",
     guideUrl: staticAsset("dse-news-article-cloze-exercise_da4b8e58.md"),
-    previewUrl: staticAsset("dse-news-article-cloze-exercise-preview_47446c60.webp"),
-    previewAlt: "Preview of an HKDSE-style news article cloze worksheet arranged on a warm paper stage.",
+    previewUrl: staticAsset("dse-news-article-cloze-exercise-preview_1ba8cff2.webp"),
+    previewAlt: "First page of iNKY Issue 150, Environmental Willpower, an HKDSE-style cloze passage with fifteen vocabulary blanks and an answer grid.",
+    previewFit: "contain",
     sampleType: "download",
-    sampleUrl: staticAsset("dse-news-article-cloze-exercise_06073d74.pdf"),
+    sampleUrl: staticAsset("dse-news-article-cloze-exercise_1ba8cff2.pdf"),
     outputLabel: "PDF sample",
     tags: ["DSE", "Cloze", "News", "B2"],
   },
@@ -94,10 +96,11 @@ export const resourceCatalogue: CatalogueResource[] = [
     category: "text-based",
     summary: "A news-based HKDSE Fact Sheet with 15 blanks, checked transcription, student answers and detailed teacher notes.",
     guideUrl: staticAsset("dse-news-fact-sheet-cloze-exercise_130d9986.md"),
-    previewUrl: staticAsset("dse-news-fact-sheet-cloze-exercise-preview_7ef5bd54.webp"),
-    previewAlt: "Preview of a news-based HKDSE Fact Sheet cloze exercise on a layered paper stage.",
+    previewUrl: staticAsset("dse-news-fact-sheet-cloze-exercise-preview_19a7abce.webp"),
+    previewAlt: "First page of iNKY Issue 149, Fact Sheet: Social Media’s Harmful Impact, an HKDSE cloze passage with fifteen vocabulary blanks.",
+    previewFit: "contain",
     sampleType: "download",
-    sampleUrl: staticAsset("dse-news-fact-sheet-cloze-exercise_ccf62df2.pdf"),
+    sampleUrl: staticAsset("dse-news-fact-sheet-cloze-exercise_19a7abce.pdf"),
     outputLabel: "PDF sample",
     tags: ["DSE", "Fact Sheet", "Cloze", "News"],
   },
@@ -109,10 +112,11 @@ export const resourceCatalogue: CatalogueResource[] = [
     category: "text-based",
     summary: "A three-part HKDSE English proofreading worksheet with a student version, answer key and word-source record.",
     guideUrl: staticAsset("dse-news-article-proofreading-exercise_e7051bf4.md"),
-    previewUrl: staticAsset("dse-news-article-proofreading-exercise-preview_4bdf4e8b.webp"),
-    previewAlt: "Preview of a three-part HKDSE news-article proofreading worksheet.",
+    previewUrl: staticAsset("dse-news-article-proofreading-exercise-preview_cbd572d5.webp"),
+    previewAlt: "First page of iNKY Issue 156, Be Proactive to Get Active, an HKDSE summary proofreading exercise with three correction tables.",
+    previewFit: "contain",
     sampleType: "download",
-    sampleUrl: staticAsset("dse-news-article-proofreading-exercise_ca64e88e.pdf"),
+    sampleUrl: staticAsset("dse-news-article-proofreading-exercise_cbd572d5.pdf"),
     outputLabel: "PDF sample",
     tags: ["DSE", "Proofreading", "News", "Grammar"],
   },

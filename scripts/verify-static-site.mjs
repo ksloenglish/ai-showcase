@@ -92,6 +92,34 @@ const expectedInteractive = {
   importOnlyHeading: "Note for adding this to the AI Resource Showcase",
 };
 
+const S02_PREVIEW_ASSET = "dse-news-article-cloze-exercise-preview_1ba8cff2.webp";
+const S02_PDF_ASSET = "dse-news-article-cloze-exercise_1ba8cff2.pdf";
+const S03_PREVIEW_ASSET = "dse-news-fact-sheet-cloze-exercise-preview_19a7abce.webp";
+const S03_PDF_ASSET = "dse-news-fact-sheet-cloze-exercise_19a7abce.pdf";
+const S04_PREVIEW_ASSET = "dse-news-article-proofreading-exercise-preview_cbd572d5.webp";
+const S04_PDF_ASSET = "dse-news-article-proofreading-exercise_cbd572d5.pdf";
+
+const expectedTextBasedPdfDownloads = [
+  {
+    order: 2,
+    slug: "dse-news-article-cloze-exercise",
+    previewAsset: S02_PREVIEW_ASSET,
+    pdfAsset: S02_PDF_ASSET,
+  },
+  {
+    order: 3,
+    slug: "dse-news-fact-sheet-cloze-exercise",
+    previewAsset: S03_PREVIEW_ASSET,
+    pdfAsset: S03_PDF_ASSET,
+  },
+  {
+    order: 4,
+    slug: "dse-news-article-proofreading-exercise",
+    previewAsset: S04_PREVIEW_ASSET,
+    pdfAsset: S04_PDF_ASSET,
+  },
+];
+
 const archiveUrl = category => `${baseUrl}/resources${category ? `?category=${category}` : ""}`;
 const detailUrl = (slug, category = "") => `${baseUrl}/resources/${slug}${category ? `?category=${category}` : ""}`;
 const expectedAssetUrl = filename => new URL(`assets/${filename}`, `${baseUrl}/`).href;
@@ -208,6 +236,81 @@ async function checkInteractiveCard(page, interactive, viewportLabel) {
   check(isTopCenter(objectPosition), `${viewportLabel} ${interactive.title} card preview is not object-positioned at top center.`);
   const cardRatio = await card.locator(".resource-card-media").evaluate(element => element.clientWidth / element.clientHeight);
   check(Math.abs(cardRatio - interactive.previewAspectRatio) < 0.02, `${viewportLabel} ${interactive.title} card does not crop its 16:9 preview.`);
+}
+
+function checkTextBasedPdfFixtures(resources) {
+  for (const resource of resources) {
+    const code = resourceCode(resource.order);
+    check(resource.previewAsset !== "TODO_PARENT_REPLACE", `${code} preview fixture must replace TODO_PARENT_REPLACE with its exact content-addressed filename.`);
+    check(resource.pdfAsset !== "TODO_PARENT_REPLACE", `${code} PDF fixture must replace TODO_PARENT_REPLACE with its exact content-addressed filename.`);
+  }
+}
+
+async function checkTextBasedPdfDetail(page, resource, viewportLabel) {
+  const code = resourceCode(resource.order);
+  const detailLocation = new URL(page.url());
+  check(detailLocation.pathname.endsWith(`/resources/${resource.slug}`), `${viewportLabel} ${code} did not remain on its rendered detail page.`);
+  check(detailLocation.searchParams.get("category") === "text-based", `${viewportLabel} ${code} detail navigation did not retain the Text-based filter.`);
+  check((await page.locator(".resource-detail-code").textContent())?.trim() === code, `${viewportLabel} ${code} detail page does not show ${code}.`);
+
+  const previewImage = page.locator(".resource-preview-stage img");
+  const previewCount = await previewImage.count();
+  check(previewCount === 1, `${viewportLabel} ${code} detail page does not expose exactly one preview image.`);
+  if (previewCount === 1) {
+    await previewImage.waitFor({ state: "visible" });
+    const previewSrc = await previewImage.getAttribute("src");
+    check(resolvesToExpectedAsset(previewSrc, page.url(), resource.previewAsset), `${viewportLabel} ${code} detail preview does not use its exact fixture asset URL.`);
+    check((await previewImage.getAttribute("alt"))?.trim().length > 0, `${viewportLabel} ${code} detail preview has no useful alt text.`);
+    const previewStyle = await previewImage.evaluate(image => ({ objectFit: getComputedStyle(image).objectFit, objectPosition: getComputedStyle(image).objectPosition }));
+    check(previewStyle.objectFit === "contain", `${viewportLabel} ${code} detail preview does not contain the full A4 page.`);
+    check(isTopCenter(previewStyle.objectPosition), `${viewportLabel} ${code} detail preview is not object-positioned at top center.`);
+  }
+
+  const download = page.getByRole("link", { name: "PDF sample", exact: true });
+  const downloadCount = await download.count();
+  check(downloadCount === 1, `${viewportLabel} ${code} does not expose exactly one PDF sample download link.`);
+  if (downloadCount === 1) {
+    const downloadHref = await download.getAttribute("href");
+    check(resolvesToExpectedAsset(downloadHref, page.url(), resource.pdfAsset), `${viewportLabel} ${code} PDF sample does not use its expected fixture asset URL.`);
+    check((await download.getAttribute("download")) !== null, `${viewportLabel} ${code} PDF sample link is missing its download attribute.`);
+    check((await download.getAttribute("target")) === null, `${viewportLabel} ${code} PDF sample link must not set an external target.`);
+    check((await download.getAttribute("rel")) === null, `${viewportLabel} ${code} PDF sample link must not set an external rel attribute.`);
+  }
+}
+
+async function checkTextBasedPdfDownloadFlow(page, resources, viewportLabel, screenshotFilename) {
+  for (const [index, resource] of resources.entries()) {
+    const code = resourceCode(resource.order);
+    await page.goto(archiveUrl("text-based"), { waitUntil: "networkidle" });
+    if (index === 0) await audit(page);
+
+    const card = resourceCard(page, resource.slug);
+    const cardCount = await card.count();
+    check(cardCount === 1, `${viewportLabel} Text-based archive does not show exactly one ${code} card.`);
+    if (cardCount !== 1) continue;
+
+    const cardLink = card.locator("a").first();
+    check((await cardLink.getAttribute("href"))?.endsWith(`/resources/${resource.slug}?category=text-based`), `${viewportLabel} ${code} Text-based archive card does not retain the Text-based filter.`);
+    const cardPreview = card.locator(".resource-card-media img");
+    check(resolvesToExpectedAsset(await cardPreview.getAttribute("src"), page.url(), resource.previewAsset), `${viewportLabel} ${code} archive preview does not use its exact fixture asset URL.`);
+    check((await cardPreview.getAttribute("alt"))?.trim().length > 0, `${viewportLabel} ${code} archive preview has no useful alt text.`);
+    const cardPreviewStyle = await cardPreview.evaluate(image => ({ objectFit: getComputedStyle(image).objectFit, objectPosition: getComputedStyle(image).objectPosition }));
+    check(cardPreviewStyle.objectFit === "contain", `${viewportLabel} ${code} archive preview does not contain the full A4 page.`);
+    check(isTopCenter(cardPreviewStyle.objectPosition), `${viewportLabel} ${code} archive preview is not object-positioned at top center.`);
+    await cardLink.scrollIntoViewIfNeeded();
+    await cardLink.click();
+    await page.waitForLoadState("networkidle");
+    await page.waitForFunction(
+      ({ slug, category }) => window.location.pathname.endsWith(`/resources/${slug}`) && new URLSearchParams(window.location.search).get("category") === category,
+      { slug: resource.slug, category: "text-based" },
+    );
+    await checkAtPageTop(page, `${viewportLabel} ${code} Text-based archive card navigation`);
+    await checkTextBasedPdfDetail(page, resource, viewportLabel);
+    await audit(page);
+  }
+
+  await checkAtPageTop(page, `${viewportLabel} S02–S04 PDF sample screenshot`);
+  await saveScreenshot(page, screenshotFilename);
 }
 
 async function waitForGuideResponse(page, resource) {
@@ -419,6 +522,8 @@ async function checkHomeAboutAndAnchor(page, viewportLabel, { mobile = false, re
 }
 
 try {
+  checkTextBasedPdfFixtures(expectedTextBasedPdfDownloads);
+
   const desktop = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: "reduce" });
   const page = await desktop.newPage();
   await installClipboardCapture(page);
@@ -442,6 +547,8 @@ try {
   check(new URL(page.url()).searchParams.get("category") === "visual", "Return to archive did not restore the selected format.");
   check((await page.locator("main").getByText(/resources shown/).first().textContent())?.trim() === "3 resources shown", "Return to archive did not restore the Visual filter.");
   await audit(page);
+
+  await checkTextBasedPdfDownloadFlow(page, expectedTextBasedPdfDownloads, "Desktop", "desktop-s02-04-downloads.png");
 
   await page.goto(archiveUrl("video"), { waitUntil: "networkidle" });
   check((await page.locator("main").getByText(/resources shown/).first().textContent())?.trim() === "6 resources shown", "Video filter did not show six resources.");
@@ -554,6 +661,8 @@ try {
     await audit(mobilePage);
   }
 
+  await checkTextBasedPdfDownloadFlow(mobilePage, expectedTextBasedPdfDownloads, "Mobile", "mobile-s02-04-downloads.png");
+
   await mobilePage.goto(archiveUrl(s22.category), { waitUntil: "networkidle" });
   check((await mobilePage.locator("main").getByText(/resources shown/).first().textContent())?.trim() === "6 resources shown", "Mobile Interactive filter did not show six resources.");
   check((await mobilePage.getByRole("button", { name: "Interactive", exact: true }).getAttribute("class"))?.includes("filter-chip-active"), "Mobile Interactive filter is not active.");
@@ -603,5 +712,6 @@ console.log("Archive filter persistence and page-top restoration: PASS");
 console.log("Twenty-two resources, including six Video and six Interactive resources: PASS");
 console.log("Six Video resources with S17–S21 labels and canonical YouTube actions: PASS");
 console.log("S22 Oxbridge News Reader live-site action, exact prompt, static preview and import-note boundary: PASS");
+console.log("S02–S04 PDF sample actions, exact replacement assets and filtered archive navigation: PASS");
 console.log("Exact guide prompts, copy actions, wrapping and static previews: PASS");
 console.log("Desktop, tablet and mobile WCAG audit: PASS");

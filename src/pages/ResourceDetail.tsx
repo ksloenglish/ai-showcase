@@ -83,7 +83,7 @@ export default function ResourceDetail() {
             </Link>
             <div className={`mt-9 grid gap-10 lg:grid-cols-[1.1fr_0.9fr] ${resource.previewAspectRatio ? "lg:items-start" : "lg:items-center"}`}>
               <div className="resource-preview-stage">
-                <img src={resource.previewUrl} alt={resource.previewAlt} style={{ aspectRatio: resource.previewAspectRatio }} />
+                <img src={resource.previewUrl} alt={resource.previewAlt} style={{ aspectRatio: resource.previewAspectRatio, objectFit: resource.previewFit }} />
                 <span className="resource-detail-code">{formatResourceCode(resource.order)}</span>
               </div>
               <div>
