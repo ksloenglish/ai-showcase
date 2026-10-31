@@ -112,8 +112,18 @@ S22: https://ksloenglish.github.io/ai-showcase/resources/oxbridge-news-reader
 - [x] Replace the published sample PDFs for S02, S03 and S04 with the three user-supplied files, preserving the source files byte-for-byte as versioned static assets and retaining the existing resource guides, catalogue records and actions unless a verified asset reference must change.
 - [x] Refresh each affected static preview from page one where the sample content differs, preserving all page content and using accurate alt text; update the manifest, asset verification and targeted regression coverage as required.
 - [x] Verify all affected desktop/mobile resource detail pages, labelled PDF-download links, previews, page-top navigation, keyboard focus, reduced motion, WCAG A/AA and no horizontal overflow as applicable.
-- [ ] Run relevant/full tests, `pnpm check`, `pnpm verify:assets`, `VITE_BASE_PATH=/ai-showcase/ pnpm build`, commit and push `main` using `pnpm release:github`, wait for successful Pages deployment and live browser regression checks, then mark complete and re-read this task list. Keep the GitHub-only source of truth; do not use retired Manus projects, checkpoints, backups, importers or `/admin`.
+- [x] Run relevant/full tests, `pnpm check`, `pnpm verify:assets`, `VITE_BASE_PATH=/ai-showcase/ pnpm build`, commit and push `main` using `pnpm release:github`, wait for successful Pages deployment and live browser regression checks, then mark complete and re-read this task list. Keep the GitHub-only source of truth; do not use retired Manus projects, checkpoints, backups, importers or `/admin`.
 
 ### Local validation
 
 S02, S03 and S04 sample PDFs were copied byte-for-byte from the user-supplied files and published under fresh content-hash filenames: `1ba8cff2`, `19a7abce` and `cbd572d5`. Page-one previews were rendered directly at 150 DPI without cropping or added material, then displayed top-centred with `object-fit: contain` so the full A4 page remains visible in archive cards and detail pages. Superseded public sample and preview versions were removed; Git history retains them. Eighteen Vitest tests across three files, TypeScript, static assets (54 catalogue plus four site assets), production build and the complete desktop/tablet/mobile browser suite passed. The browser suite now verifies the exact S02–S04 preview/download URLs, `download` attributes, no external-link attributes, full-page preview fit, archive-filter persistence and page-top restoration, as well as WCAG and horizontal-overflow checks.
+
+### Public release evidence
+
+Content commit `5b638d810b10e9e65b3b3ec3926147129f2a3872` was pushed to `main` with message `feat: update S02 to S04 PDF examples`. GitHub Pages deployment [41159097129](https://github.com/ksloenglish/ai-showcase/actions/runs/41159097129) succeeded. The complete live browser suite then passed, including exact S02–S04 content-addressed PDF and preview URLs, direct-download actions, full-page A4 preview fitting, text-based filter restoration, page-top navigation, keyboard focus, reduced motion, existing resource prompt checks, desktop/tablet/mobile WCAG and horizontal-overflow checks. Live screenshots were captured outside the repository. This completed task record is a documentation-only follow-up; the updated examples remain this verified public release.
+
+S02: https://ksloenglish.github.io/ai-showcase/resources/dse-news-article-cloze-exercise
+
+S03: https://ksloenglish.github.io/ai-showcase/resources/dse-news-fact-sheet-cloze-exercise
+
+S04: https://ksloenglish.github.io/ai-showcase/resources/dse-news-article-proofreading-exercise
