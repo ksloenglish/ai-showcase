@@ -127,3 +127,14 @@ S02: https://ksloenglish.github.io/ai-showcase/resources/dse-news-article-cloze-
 S03: https://ksloenglish.github.io/ai-showcase/resources/dse-news-fact-sheet-cloze-exercise
 
 S04: https://ksloenglish.github.io/ai-showcase/resources/dse-news-article-proofreading-exercise
+
+## 31 October 2026 — Match S02–S04 thumbnails to the established paper-stage format
+
+- [x] Replace the current full-page-only S02–S04 preview images with new versioned thumbnails that match the existing text-based paper-stage format: warm-paper canvas, layered sheets on the left and the complete updated first PDF page on the right. Do not alter the three newly supplied PDF downloads.
+- [x] Preserve the complete source-page content within each thumbnail without cropping or content edits; remove the temporary direct-page preview variants, retain accurate alt text and restore standard cover fitting so cards and detail previews match S01/S05 and the established text-based archive.
+- [x] Update catalogue references, manifest, source-fidelity and browser regression coverage; verify desktop/mobile cards and detail pages, filtered navigation, download links, top-centred previews, page-top navigation, keyboard focus, reduced motion, WCAG A/AA and no horizontal overflow as applicable.
+- [ ] Run relevant/full tests, `pnpm check`, `pnpm verify:assets`, `VITE_BASE_PATH=/ai-showcase/ pnpm build`, commit and push `main` using `pnpm release:github`, wait for successful Pages deployment and live browser regression checks, then mark complete and re-read this task list. Keep the GitHub-only source of truth; do not use retired Manus projects, checkpoints, backups, importers or `/admin`.
+
+### Local validation
+
+The three approved source PDF pages remain unchanged. Their first pages are proportionally rendered in new 1600 × 1000 paper-stage thumbnails: the recovered pre-update text-based artwork supplies the warm-paper canvas, layered left sheets, shadow, spacing and cyan/lime accents, while the complete new page is placed on the right with no cropping or textual/content edits. The temporary direct-page WebP versions were removed, and standard shared `cover` fitting was restored. Eighteen Vitest tests across three files, TypeScript, static assets (54 catalogue plus four site assets), production build and the complete desktop/tablet/mobile browser suite passed. New browser assertions check each versioned preview and PDF URL, standard 16:10 cover geometry, top-centred previews, direct-download action, filter restoration, page-top navigation, WCAG and horizontal-overflow behaviour.

@@ -27,7 +27,7 @@ export function ResourceCard({
     <article className={`resource-card ${featured ? "resource-card-featured" : ""}`}>
       <Link href={`/resources/${resource.slug}${archiveSearch}`} className="block">
         <div className="resource-card-media" style={{ aspectRatio: resource.previewAspectRatio }}>
-          <img src={resource.previewUrl} alt={resource.previewAlt} loading="lazy" style={{ objectFit: resource.previewFit }} />
+          <img src={resource.previewUrl} alt={resource.previewAlt} loading="lazy" />
           <span className="resource-code">{formatResourceCode(resource.order)}</span>
           <span className="resource-output"><Icon size={13} /> {resource.outputLabel}</span>
         </div>

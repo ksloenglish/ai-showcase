@@ -92,11 +92,11 @@ const expectedInteractive = {
   importOnlyHeading: "Note for adding this to the AI Resource Showcase",
 };
 
-const S02_PREVIEW_ASSET = "dse-news-article-cloze-exercise-preview_1ba8cff2.webp";
+const S02_PREVIEW_ASSET = "dse-news-article-cloze-exercise-preview_1ba8cff2-paper-stage.webp";
 const S02_PDF_ASSET = "dse-news-article-cloze-exercise_1ba8cff2.pdf";
-const S03_PREVIEW_ASSET = "dse-news-fact-sheet-cloze-exercise-preview_19a7abce.webp";
+const S03_PREVIEW_ASSET = "dse-news-fact-sheet-cloze-exercise-preview_19a7abce-paper-stage.webp";
 const S03_PDF_ASSET = "dse-news-fact-sheet-cloze-exercise_19a7abce.pdf";
-const S04_PREVIEW_ASSET = "dse-news-article-proofreading-exercise-preview_cbd572d5.webp";
+const S04_PREVIEW_ASSET = "dse-news-article-proofreading-exercise-preview_cbd572d5-paper-stage.webp";
 const S04_PDF_ASSET = "dse-news-article-proofreading-exercise_cbd572d5.pdf";
 
 const expectedTextBasedPdfDownloads = [
@@ -262,8 +262,10 @@ async function checkTextBasedPdfDetail(page, resource, viewportLabel) {
     check(resolvesToExpectedAsset(previewSrc, page.url(), resource.previewAsset), `${viewportLabel} ${code} detail preview does not use its exact fixture asset URL.`);
     check((await previewImage.getAttribute("alt"))?.trim().length > 0, `${viewportLabel} ${code} detail preview has no useful alt text.`);
     const previewStyle = await previewImage.evaluate(image => ({ objectFit: getComputedStyle(image).objectFit, objectPosition: getComputedStyle(image).objectPosition }));
-    check(previewStyle.objectFit === "contain", `${viewportLabel} ${code} detail preview does not contain the full A4 page.`);
+    check(previewStyle.objectFit === "cover", `${viewportLabel} ${code} detail preview does not use the shared paper-stage cover treatment.`);
     check(isTopCenter(previewStyle.objectPosition), `${viewportLabel} ${code} detail preview is not object-positioned at top center.`);
+    const detailRatio = await previewImage.evaluate(image => image.clientWidth / image.clientHeight);
+    check(Math.abs(detailRatio - 16 / 10) < 0.02, `${viewportLabel} ${code} detail preview does not retain the standard paper-stage geometry.`);
   }
 
   const download = page.getByRole("link", { name: "PDF sample", exact: true });
@@ -295,8 +297,10 @@ async function checkTextBasedPdfDownloadFlow(page, resources, viewportLabel, scr
     check(resolvesToExpectedAsset(await cardPreview.getAttribute("src"), page.url(), resource.previewAsset), `${viewportLabel} ${code} archive preview does not use its exact fixture asset URL.`);
     check((await cardPreview.getAttribute("alt"))?.trim().length > 0, `${viewportLabel} ${code} archive preview has no useful alt text.`);
     const cardPreviewStyle = await cardPreview.evaluate(image => ({ objectFit: getComputedStyle(image).objectFit, objectPosition: getComputedStyle(image).objectPosition }));
-    check(cardPreviewStyle.objectFit === "contain", `${viewportLabel} ${code} archive preview does not contain the full A4 page.`);
+    check(cardPreviewStyle.objectFit === "cover", `${viewportLabel} ${code} archive preview does not use the shared paper-stage cover treatment.`);
     check(isTopCenter(cardPreviewStyle.objectPosition), `${viewportLabel} ${code} archive preview is not object-positioned at top center.`);
+    const cardRatio = await card.locator(".resource-card-media").evaluate(element => element.clientWidth / element.clientHeight);
+    check(Math.abs(cardRatio - 16 / 10) < 0.02, `${viewportLabel} ${code} archive preview does not retain the standard paper-stage geometry.`);
     await cardLink.scrollIntoViewIfNeeded();
     await cardLink.click();
     await page.waitForLoadState("networkidle");
