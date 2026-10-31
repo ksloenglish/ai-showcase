@@ -142,3 +142,11 @@ The three approved source PDF pages remain unchanged. Their first pages are prop
 ### Public release evidence
 
 Content commit `1c82d83951e732aac59cd261ee8a8e1be048edd7` was pushed to `main` with message `fix: restore S02 to S04 paper-stage thumbnails`. GitHub Pages deployment [41160033748](https://github.com/ksloenglish/ai-showcase/actions/runs/41160033748) succeeded. The complete live browser suite then passed, including the S02–S04 versioned preview and direct-download URLs, shared 16:10 cover-stage geometry, top-centred preview placement, filter restoration, page-top navigation, keyboard focus, reduced motion, existing prompt checks, desktop/tablet/mobile WCAG and horizontal-overflow checks. The corrected desktop and mobile screenshots were reviewed outside the repository. This completed task record is a documentation-only follow-up; the visual correction remains this verified public release.
+
+## 31 October 2026 — Update the showcase skill for consistent future thumbnails
+
+- [x] Update the local `ai-resource-showcase-webapp` skill so future PDF-based resource thumbnails follow the established text-based paper-stage format by default, while preserving full source-page content and routing exceptional visual changes correctly. Validate the skill update and preserve the published website unchanged except for the required task record and its GitHub Pages release.
+
+### Skill update record
+
+Added `references/pdf-paper-stage-thumbnails.md` and linked it from the core asset-preparation step in `ai-resource-showcase-webapp/SKILL.md`. The new targeted standard tells future agents to preserve the established same-category thumbnail language, use the approved 1600 × 1000 warm-paper stage, place a complete proportional page-one render on the right, version preview URLs, retain standard 16:10 `cover`/top-centre display and validate exact assets, downloads and desktop/mobile geometry. It makes clear that the stage is conditional on an existing approved paper-stage convention and that user-supplied screenshots remain untouched. `quick_validate.py` reported the skill valid; the 98-line main skill and 20-line reference remain concise. This local skill update does not alter public resource content.
